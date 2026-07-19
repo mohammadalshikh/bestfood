@@ -1,0 +1,26 @@
+[
+    {
+        "userId": 1,
+        "productId": 3,
+        "quantity": 4,
+        "transactionId": 1
+    },
+    {
+        "userId": 1,
+        "productId": 2,
+        "quantity": 1,
+        "transactionId": 1
+    },
+    {
+        "userId": 1,
+        "productId": 2,
+        "quantity": 1,
+        "transactionId": 2
+    },
+    {
+        "userId": 1,
+        "productId": 0,
+        "quantity": 0,
+        "transactionId": 2
+    }
+]
