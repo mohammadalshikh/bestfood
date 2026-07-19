@@ -6,12 +6,17 @@ import java.util.*;
 import bestfood.model.*;
 import bestfood.service.JsonDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class AdminController {
+
+    @Value("${app.data.dir}")
+    private String dataDir;
 
     @Autowired
     private JsonDatabaseService db;
@@ -172,8 +177,21 @@ public class AdminController {
     public String updateproducttodb(@RequestParam("id") int id, @RequestParam("name") String name,
             @RequestParam("price") float price, @RequestParam("weight") int weight,
             @RequestParam("quantity") int quantity, @RequestParam("description") String description,
-            @RequestParam("productImage") String picture, @RequestParam("discount") double discount) {
-        db.updateProduct(id, name, picture, quantity, price, weight, description, discount);
+            @RequestParam(value = "productImage", required = false) MultipartFile file,
+            @RequestParam(value = "oldImagePath", required = false) String oldImagePath,
+            @RequestParam("discount") double discount) throws java.io.IOException {
+
+        String imagePath = oldImagePath;
+
+        if (file != null && !file.isEmpty()) {
+            String fileName = file.getOriginalFilename();
+            java.nio.file.Path path = java.nio.file.Paths.get(dataDir + "/uploads/" + fileName);
+            java.nio.file.Files.createDirectories(path.getParent());
+            java.nio.file.Files.write(path, file.getBytes());
+            imagePath = "/uploads/" + fileName;
+        }
+
+        db.updateProduct(id, name, imagePath, quantity, price, weight, description, discount);
         return "redirect:/admin/products";
     }
 
@@ -261,10 +279,19 @@ public class AdminController {
     public String addproducttodb(@RequestParam("name") String name, @RequestParam("categoryid") String catid,
             @RequestParam("price") float price, @RequestParam("weight") int weight,
             @RequestParam("quantity") int quantity, @RequestParam("description") String description,
-            @RequestParam("productImage") String picture, @RequestParam("discount") double discount) {
+            @RequestParam("productImage") MultipartFile file,
+            @RequestParam("discount") double discount) throws java.io.IOException {
+
+        String fileName = file.getOriginalFilename();
+        java.nio.file.Path path = java.nio.file.Paths.get(dataDir + "/uploads/" + fileName);
+        java.nio.file.Files.createDirectories(path.getParent());
+        java.nio.file.Files.write(path, file.getBytes());
+
+        String imagePath = "/uploads/" + fileName;
+
         Category category = db.getCategoryByName(catid);
         if (category != null) {
-            db.addProduct(name, picture, category.getCategoryId(), quantity, price, weight, description, discount);
+            db.addProduct(name, imagePath, category.getCategoryId(), quantity, price, weight, description, discount);
         }
         return "redirect:/admin/products";
     }

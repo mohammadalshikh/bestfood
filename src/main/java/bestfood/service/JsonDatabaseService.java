@@ -3,6 +3,8 @@ package bestfood.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import bestfood.model.*;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -15,14 +17,17 @@ import java.util.stream.Collectors;
 @Service
 public class JsonDatabaseService {
 
-    private static final String DB_DIR = "database";
-    private static final String USERS_FILE = DB_DIR + "/users.json";
-    private static final String PRODUCTS_FILE = DB_DIR + "/products.json";
-    private static final String CATEGORIES_FILE = DB_DIR + "/categories.json";
-    private static final String CART_FILE = DB_DIR + "/cart.json";
-    private static final String CUSTOM_CART_FILE = DB_DIR + "/custom_cart.json";
-    private static final String TRANSACTION_HISTORY_FILE = DB_DIR + "/transaction_history.json";
-    private static final String PRODUCT_MATRIX_FILE = DB_DIR + "/product_matrix.json";
+    @Value("${app.data.dir}")
+    private String dataDir;
+
+    private String DB_DIR;
+    private String USERS_FILE;
+    private String PRODUCTS_FILE;
+    private String CATEGORIES_FILE;
+    private String CART_FILE;
+    private String CUSTOM_CART_FILE;
+    private String TRANSACTION_HISTORY_FILE;
+    private String PRODUCT_MATRIX_FILE;
 
     private final ObjectMapper objectMapper;
 
@@ -45,6 +50,15 @@ public class JsonDatabaseService {
 
     @PostConstruct
     public void init() {
+        DB_DIR = dataDir + "/database";
+        USERS_FILE = DB_DIR + "/users.json";
+        PRODUCTS_FILE = DB_DIR + "/products.json";
+        CATEGORIES_FILE = DB_DIR + "/categories.json";
+        CART_FILE = DB_DIR + "/cart.json";
+        CUSTOM_CART_FILE = DB_DIR + "/custom_cart.json";
+        TRANSACTION_HISTORY_FILE = DB_DIR + "/transaction_history.json";
+        PRODUCT_MATRIX_FILE = DB_DIR + "/product_matrix.json";
+
         createDatabaseDirectory();
         loadAllData();
         initializeDefaultData();
@@ -96,7 +110,7 @@ public class JsonDatabaseService {
     private void initializeDefaultData() {
         // Initialize default users if empty
         if (users.isEmpty()) {
-            User user1 = new User(1, "jay", "123", "ROLE_USER", null, "jay190912@gmail.com");
+            User user1 = new User(1, "mo", "123", "ROLE_USER", null, "mo190912@gmail.com");
             User admin = new User(2, "admin", "123", "ROLE_ADMIN", null, "admin190912@gmail.com");
             users.add(user1);
             users.add(admin);
@@ -115,42 +129,20 @@ public class JsonDatabaseService {
 
         // Initialize default products if empty
         if (products.isEmpty()) {
-            products.add(new Product(1, "Orange",
-                    "https://clipart-library.com/images_k/orange-transparent-background/orange-transparent-background-2.png",
-                    1, 484, 3, 40, "Sweet", 0));
-            products.add(new Product(2, "Onion",
-                    "https://clipart-library.com/images_k/onion-transparent-background/onion-transparent-background-16.png",
-                    2, 352, 3, 40, "Fresh", 0));
-            products.add(new Product(3, "Beef",
-                    "https://clipart-library.com/images_k/meat-transparent/meat-transparent-4.png", 3, 321, 30, 1000,
-                    "Fresh", 0));
-            products.add(new Product(4, "Apple", "https://clipart-library.com/img/1565435.png", 1, 593, 2, 30, "", 0));
-            products.add(new Product(5, "Watermelon",
-                    "https://clipart-library.com/new_gallery/44-444830_share-this-article-watermelon-png.png", 1, 423,
-                    10, 1000, "", 0));
-            products.add(new Product(6, "Banana", "https://clipart-library.com/image_gallery2/Banana.png", 1, 463, 2,
-                    1000, "", 0));
-            products.add(new Product(7, "Grapes",
-                    "https://clipart-library.com/new_gallery/11-119102_frutas-grape-png.png", 1, 481, 5, 340, "", 0));
-            products.add(new Product(8, "Pineapple",
-                    "https://static.vecteezy.com/system/resources/previews/008/848/362/original/fresh-pineapple-free-png.png",
-                    1, 294, 6, 500, "", 0));
-            products.add(new Product(9, "Lettuce",
-                    "https://www.pngmart.com/files/16/Green-Lettuce-PNG-Transparent-Image.png", 2, 234, 4, 300, "", 0));
-            products.add(new Product(10, "Tomato",
-                    "https://cdn.discordapp.com/attachments/1106825532508733460/1136204069439016960/image-removebg-preview.png",
-                    1, 222, 2, 30, "", 0));
-            products.add(new Product(11, "Corn",
-                    "https://www.pngall.com/wp-content/uploads/2016/05/Corn-Free-Download-PNG.png", 2, 220, 4, 160, "",
-                    0));
-            products.add(new Product(12, "Cucumber",
-                    "https://www.freepnglogos.com/uploads/cucumber-png/cucumber-png-image-purepng-transparent-png-26.png",
-                    2, 120, 2, 30, "", 0));
-            products.add(new Product(13, "Potato",
-                    "https://clipart-library.com/image_gallery2/Potato-Free-Download-PNG.png", 2, 190, 2, 40, "", 0));
-            products.add(new Product(14, "Cantaloupe",
-                    "https://www.pngmart.com/files/15/Yellow-Cantaloupe-PNG-Transparent-Image.png", 1, 139, 6, 500, "",
-                    0));
+            products.add(new Product(1, "Orange", "/images/orange.png", 1, 484, 3, 40, "Sweet", 0));
+            products.add(new Product(2, "Onion", "/images/onion.png", 2, 352, 3, 40, "Fresh", 0));
+            products.add(new Product(3, "Beef", "/images/beef.png", 3, 321, 30, 1000, "Fresh", 0));
+            products.add(new Product(4, "Apple", "/images/apple.png", 1, 593, 2, 30, "", 0));
+            products.add(new Product(5, "Watermelon", "/images/watermelon.png", 1, 423, 10, 1000, "", 0));
+            products.add(new Product(6, "Banana", "/images/banana.png", 1, 463, 2, 1000, "", 0));
+            products.add(new Product(7, "Grapes", "/images/grapes.png", 1, 481, 5, 340, "", 0));
+            products.add(new Product(8, "Pineapple", "/images/pineapple.png", 1, 294, 6, 500, "", 0));
+            products.add(new Product(9, "Lettuce", "/images/lettuce.png", 2, 234, 4, 300, "", 0));
+            products.add(new Product(10, "Tomato", "/images/tomato.png", 1, 222, 2, 30, "", 0));
+            products.add(new Product(11, "Corn", "/images/corn.png", 2, 220, 4, 160, "", 0));
+            products.add(new Product(12, "Cucumber", "/images/cucumber.png", 2, 120, 2, 30, "", 0));
+            products.add(new Product(13, "Potato", "/images/potato.png", 2, 190, 2, 40, "", 0));
+            products.add(new Product(14, "Cantaloupe", "/images/cantaloupe.png", 1, 139, 6, 500, "", 0));
             productIdCounter.set(14);
             saveProducts();
 
@@ -255,7 +247,6 @@ public class JsonDatabaseService {
         Product product = new Product(newId, name, image, categoryId, quantity, price, weight, description, discount);
         products.add(product);
 
-        // Add to product matrix
         ProductMatrix pm = new ProductMatrix(newId);
         productMatrices.add(pm);
 
@@ -306,7 +297,6 @@ public class JsonDatabaseService {
         products.removeIf(p -> p.getId() == productId);
         productMatrices.removeIf(pm -> pm.getProduct() == productId);
 
-        // Remove from all product matrices
         for (ProductMatrix pm : productMatrices) {
             pm.getProductPairs().remove("p" + productId);
         }

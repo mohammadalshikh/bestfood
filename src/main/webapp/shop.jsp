@@ -1,4 +1,4 @@
-<%@ page import="bestfood.ShopItem" %>
+<%@ page import="bestfood.model.ShopItem" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -69,9 +69,9 @@
             }
 
             .restaurant-item img {
-                width: 300px;
-                height: 200px;
-                object-fit: cover;
+                width: 100%;
+                aspect-ratio: 3 / 2;
+                object-fit: contain;
                 border-radius: 10px;
             }
 

@@ -38,7 +38,7 @@
         <br>
         <div class="jumbotron container border border-info">
             <h3>Add a new Product</h3>
-            <form action="sendData" method="post">
+            <form action="sendData" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-sm-5">
                         <% Integer nextId=(Integer) request.getAttribute("nextProductId"); 
@@ -89,7 +89,7 @@
 
                         <p>Product Image</p>
                         <div class="custom-file">
-                            <input type="text" class="form-control border border-warning" required name="productImage" id="productImage" placeholder="Enter image link">
+                            <input type="file" class="form-control border border-warning" required name="productImage" id="productImage" accept="image/*">
                         </div>
 
                         <div class="form-group">

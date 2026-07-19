@@ -78,7 +78,7 @@
                 </tr>
                 <tbody>
                     <% List<Product> productList = (List<Product>) request.getAttribute("products");
-                    List<Category> categoryList = (List<Category>) request.getAttribut("categories");
+                    List<Category> categoryList = (List<Category>) request.getAttribute("categories");
 
                     Map<Integer, String> categoryMap = new HashMap<>();
                     if (categoryList != null) {

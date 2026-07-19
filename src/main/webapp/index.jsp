@@ -150,9 +150,9 @@
             }
 
             .restaurant-item img {
-                width: 300px;
-                height: 200px;
-                object-fit: cover;
+                width: 100%;
+                aspect-ratio: 3 / 2;
+                object-fit: contain;
                 border-radius: 10px;
             }
 
@@ -270,7 +270,7 @@
 
                     <div class="col-md-4">
                         <div class="restaurant-item">
-                            <img src="/images/orange.jpg" alt="Orange">
+                            <img src="/images/orange.png" alt="Orange" >
                             <br><br>
                             <h4>Orange - 3.0$</h4>
                             <form action="/addtocart" method="get" id="ac2">
@@ -367,7 +367,7 @@
             }
 
             function displaySearchResults(results) {
-                searchResults.innerHTML = ''; // Clear previous results
+                searchResults.innerHTML = '';
 
                 if (results.length > 0) {
                     for (let i = 0; i < Math.min(results.length, 3); i++) {

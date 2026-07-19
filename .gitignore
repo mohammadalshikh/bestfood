@@ -13,6 +13,7 @@ Thumbs.db
 **/target/
 *.class
 bin/
+app/
 
 # Logs
 *.log

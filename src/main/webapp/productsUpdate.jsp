@@ -37,7 +37,7 @@
         <br>
         <div class="jumbotron container border border-info">
             <h3>Update Existing Product</h3>
-            <form action="updateData" method="post">
+            <form action="updateData" method="post" enctype="multipart/form-data">
                 <div class="row">
 
                     <div class="col-sm-5">
@@ -83,7 +83,7 @@
 
                         <p>Product Image</p>
                         <div class="custom-file">
-                            <input type="text" class="form-control border border-success" required name="productImage" placeholder="Enter image link" value="${ pimage }">
+                            <input type="file" class="form-control border border-warning" required name="productImage" id="productImage" accept="image/*"> 
                         </div>
 
                         <div class="form-group">
@@ -95,7 +95,7 @@
                             <input type="input" class="form-control border border-success" required name="discount" value="${ pdiscount }" min="0" max="1" step="any" placeholder="Discount">
                         </div>
 
-                        <input type="hidden" name="imgName">
+                        <input type="hidden" name="oldImagePath" value="${ pimage }">
                         <input type="submit" value="Update Details" class="btn btn-primary">
                     </div>
                 </div>

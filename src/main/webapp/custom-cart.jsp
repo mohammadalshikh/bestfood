@@ -1,4 +1,4 @@
-<%@ page import="bestfood.CustomCartItem" %>
+<%@ page import="bestfood.model.CustomCartItem" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html lang="en">
