@@ -9,7 +9,7 @@
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 
-        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
 
         <style>
             .img-contact {
@@ -117,7 +117,7 @@
             </nav>
         </div>
         <div class="container py-5">
-            <div><img src="/images/contact.png" alt="Contact Us" class="img-contact">
+            <div><img src="/images/contact.jpg" alt="Contact Us" class="img-contact">
             </div>
             <br>
             <h1 class="text-center">Contact Us</h1>

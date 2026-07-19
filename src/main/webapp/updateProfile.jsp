@@ -152,8 +152,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Total Before Reaching Next Coupon</label>
-                        <input class="form-control form-control-lg" readonly="true" value="${cumulativeTotal}">
+                        <label>Minimum purchase for next coupon</label>
+                        <input class="form-control form-control-lg" readonly="true" value="${100-cumulativeTotal}">
                     </div>
 
                     <input type="submit" value="Update Profile" class="btn btn-primary btn-block"><br>

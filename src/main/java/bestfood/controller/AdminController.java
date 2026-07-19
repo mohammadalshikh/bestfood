@@ -246,7 +246,13 @@ public class AdminController {
     @RequestMapping(value = "/applyCoupon", method = RequestMethod.POST)
     public String applyCoupon(@RequestParam("apply") int coupons) {
         int userId = getUserID();
-        if (getCouponsApplied(usernameforclass) != 0) {
+        User user = db.getUserByUsername(usernameforclass);
+
+        if (user == null || coupons > user.getCoupons() || coupons < 0) {
+            return "redirect:/buy";
+        }
+        
+        if (db.getCartItem(userId, 0) != null) {
             db.updateCartItemQuantity(userId, 0, coupons);
         } else {
             db.addToCart(userId, 0, coupons);

@@ -129,20 +129,21 @@ public class JsonDatabaseService {
 
         // Initialize default products if empty
         if (products.isEmpty()) {
+            products.add(new Product(0, "Coupon", "/images/coupon.png", 0, 0, 0, 0, "Coupon", 0));
             products.add(new Product(1, "Orange", "/images/orange.png", 1, 484, 3, 40, "Sweet", 0));
-            products.add(new Product(2, "Onion", "/images/onion.png", 2, 352, 3, 40, "Fresh", 0));
+            products.add(new Product(2, "Pineapple", "/images/pineapple.png", 1, 294, 6, 500, "", 0));
             products.add(new Product(3, "Beef", "/images/beef.png", 3, 321, 30, 1000, "Fresh", 0));
             products.add(new Product(4, "Apple", "/images/apple.png", 1, 593, 2, 30, "", 0));
             products.add(new Product(5, "Watermelon", "/images/watermelon.png", 1, 423, 10, 1000, "", 0));
             products.add(new Product(6, "Banana", "/images/banana.png", 1, 463, 2, 1000, "", 0));
             products.add(new Product(7, "Grapes", "/images/grapes.png", 1, 481, 5, 340, "", 0));
-            products.add(new Product(8, "Pineapple", "/images/pineapple.png", 1, 294, 6, 500, "", 0));
+            products.add(new Product(8, "Onion", "/images/onion.png", 2, 352, 3, 40, "Fresh", 0));
             products.add(new Product(9, "Lettuce", "/images/lettuce.png", 2, 234, 4, 300, "", 0));
             products.add(new Product(10, "Tomato", "/images/tomato.png", 1, 222, 2, 30, "", 0));
             products.add(new Product(11, "Corn", "/images/corn.png", 2, 220, 4, 160, "", 0));
             products.add(new Product(12, "Cucumber", "/images/cucumber.png", 2, 120, 2, 30, "", 0));
             products.add(new Product(13, "Potato", "/images/potato.png", 2, 190, 2, 40, "", 0));
-            products.add(new Product(14, "Cantaloupe", "/images/cantaloupe.png", 1, 139, 6, 500, "", 0));
+            products.add(new Product(14, "Cherry", "/images/cherry.png", 1, 139, 6, 30, "Sweet", 0));
             productIdCounter.set(14);
             saveProducts();
 
@@ -451,7 +452,6 @@ public class JsonDatabaseService {
         for (CustomCart item : userCustomCart) {
             addToCart(userId, item.getProductId(), item.getQuantity());
         }
-        clearCustomCart(userId);
     }
 
     private void saveCustomCarts() {

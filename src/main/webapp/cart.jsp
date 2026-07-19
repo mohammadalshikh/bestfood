@@ -232,10 +232,7 @@
                                 <td style="width: 250px">$<%= item.getTotalPrice() %>
                                 </td>
                                 <td>
-                                    <form action="/deleteitem" method="get">
-                                        <input type="hidden" name="productID" value="<%= item.getProductID() %>">
-                                        <button type="submit" class="btn btn-delete">Remove</button>
-                                    </form>
+                                    <a href="/deleteitem?productID=<%= item.getProductID() %>" class="btn btn-delete">Remove</a>
                                 </td>
                             </tr>
                         <% } %>

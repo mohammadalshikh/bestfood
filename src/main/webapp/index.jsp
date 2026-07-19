@@ -244,7 +244,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="restaurant-item">
-                            <img src="/images/banana.jpg" alt="Banana">
+                            <img src="/images/banana.png" alt="Banana">
                             <div class="container">
                                 <br>
                                 <h4>Banana - 2.0$</h4>
@@ -293,7 +293,7 @@
 
                     <div class="col-md-4">
                         <div class="restaurant-item">
-                            <img src="/images/watermelon.jpg"
+                            <img src="/images/watermelon.png"
                                 alt="Watermelon">
                             <br><br>
                             <h4>Watermelon - 10.0$</h4>
