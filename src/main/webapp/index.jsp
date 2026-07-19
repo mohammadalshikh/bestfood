@@ -355,7 +355,7 @@
                         'Watermelon',
                         'Potato',
                         'Onion',
-                        'Cantaloupe'
+                        'Cherry'
                     ];
 
                     const filteredResults = sampleResults.filter(result => result.toLowerCase().includes(query.toLowerCase()));
