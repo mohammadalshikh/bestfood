@@ -41,7 +41,7 @@ public class AdminController {
 
         return "admin/login";
     }
-
+    
 
     @GetMapping("/admin/categories")
     public String categories(Model model) {
