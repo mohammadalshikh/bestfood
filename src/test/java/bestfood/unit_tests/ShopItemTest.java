@@ -1,8 +1,7 @@
 package bestfood.unit_tests;
-import org.junit.Test;
 
 import bestfood.model.ShopItem;
-
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class ShopItemTest {

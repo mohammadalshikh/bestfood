@@ -1,14 +1,10 @@
 package bestfood.unit_tests;
+
 import bestfood.controller.AdminController;
 import bestfood.controller.UserController;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 import org.springframework.ui.Model;
-
-
-import java.sql.*;
-import java.util.*;
-
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
 
 public class AdminControllerTest {
@@ -59,7 +55,8 @@ public class AdminControllerTest {
 
         String result = adminController.index(modelMock);
 
-        // Verify that the model contains the attribute "username" with the expected value
+        // Verify that the model contains the attribute "username" with the expected
+        // value
         verify(modelMock, times(1)).addAttribute("username", username);
         // Verify that the return value is as expected
         assertEquals("index", result);
@@ -73,10 +70,4 @@ public class AdminControllerTest {
         // Verify that the return value is as expected
         assertEquals("userLogin", result);
     }
-
-
-
-
-
-
 }

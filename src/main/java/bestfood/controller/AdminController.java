@@ -1,10 +1,11 @@
 package bestfood.controller;
 
+import bestfood.model.*;
+import bestfood.service.JsonDatabaseService;
+
 import java.text.DecimalFormat;
 import java.util.*;
 
-import bestfood.model.*;
-import bestfood.service.JsonDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
@@ -251,7 +252,7 @@ public class AdminController {
         if (user == null || coupons > user.getCoupons() || coupons < 0) {
             return "redirect:/buy";
         }
-        
+
         if (db.getCartItem(userId, 0) != null) {
             db.updateCartItemQuantity(userId, 0, coupons);
         } else {

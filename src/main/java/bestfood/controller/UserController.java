@@ -1,20 +1,18 @@
 package bestfood.controller;
 
-import java.util.*;
-
 import bestfood.model.*;
 import bestfood.service.JsonDatabaseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.util.MultiValueMap;
 
 @Controller
@@ -48,7 +46,8 @@ public class UserController {
         List<Product> products = db.getAllProducts();
 
         for (Product product : products) {
-            if (product.getId() == 0) continue;
+            if (product.getId() == 0)
+                continue;
             String suggestedItem = "";
             if (product.getSuggestedItem() != 0) {
                 Product suggested = db.getProductById(product.getSuggestedItem());

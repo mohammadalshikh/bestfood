@@ -1,8 +1,7 @@
 package bestfood.unit_tests;
-import org.junit.Test;
 
 import bestfood.model.CustomCartItem;
-
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class CustomCartItemTest {
@@ -18,7 +17,7 @@ public class CustomCartItemTest {
 
         assertEquals(productName, customCartItem.getProductName());
         assertEquals(quantity, customCartItem.getQuantity());
-        assertEquals(totalPrice, customCartItem.getTotalPrice(), 0.001); // Using delta to handle float comparison
+        assertEquals(totalPrice, customCartItem.getTotalPrice(), 0.001);
         assertEquals(productID, customCartItem.getProductID());
     }
 
@@ -33,7 +32,7 @@ public class CustomCartItemTest {
 
         assertEquals(productName, customCartItem.getProductName());
         assertEquals(quantity, customCartItem.getQuantity());
-        assertEquals(totalPrice, customCartItem.getTotalPrice(), 0.001); // Using delta to handle float comparison
+        assertEquals(totalPrice, customCartItem.getTotalPrice(), 0.001);
         assertEquals(productID, customCartItem.getProductID());
     }
 }

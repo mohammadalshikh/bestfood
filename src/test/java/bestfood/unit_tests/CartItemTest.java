@@ -1,8 +1,7 @@
 package bestfood.unit_tests;
+
 import org.junit.Test;
-
 import bestfood.model.CartItem;
-
 import static org.junit.Assert.assertEquals;
 
 public class CartItemTest {
