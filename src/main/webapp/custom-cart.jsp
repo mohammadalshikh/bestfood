@@ -176,7 +176,7 @@
             <h1>My Custom Cart</h1>
 
             <div class="d-flex justify-content-end mb-3">
-                <form action="/clearcustomcart" method="get">
+                <form action="/delete-custom-cart" method="get">
                     <button type="submit" id="clearCart" class="btn btn-action">Clear cart</button>
                 </form>
 
@@ -214,10 +214,7 @@
                                 </td>
                                 <td style="width: 250px">$<%= item.getTotalPrice() %></td>
                                 <td>
-                                    <form action="/deletecustom" method="get">
-                                        <input type="hidden" name="productID" value="<%= item.getProductID() %>">
-                                        <button type="submit" class="btn btn-delete">Remove</button>
-                                    </form>
+                                    <a href="/delete-custom-cart-item?productID=<%= item.getProductID() %>" class="btn btn-delete">Remove</a>
                                 </td>
                             </tr>
                         <% } %>

@@ -1,7 +1,8 @@
 <%@page import="bestfood.model.Product" %>
 <%@page import="bestfood.model.Category" %>
-<%@page import="java.util.*" %>
-<%@page import="java.text.*" %>
+<%@page import="java.util.List" %>
+<%@page import="java.util.Map" %>
+<%@page import="java.util.HashMap" %>
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 

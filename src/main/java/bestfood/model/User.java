@@ -1,13 +1,30 @@
 package bestfood.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "users")
 public class User {
-    private int userId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @Column(nullable = false, unique = true)
     private String username;
+
     private String password;
+
     private String role;
+
     private String address;
+
+    @Column(unique = true)
     private String email;
+
     private int coupons;
+
     private float cumulativeTotal;
 
     public User() {
@@ -16,7 +33,7 @@ public class User {
         this.cumulativeTotal = 0f;
     }
 
-    public User(int userId, String username, String password, String role, String address, String email) {
+    public User(Integer userId, String username, String password, String role, String address, String email) {
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -28,11 +45,12 @@ public class User {
     }
 
     // Getters and Setters
-    public int getUserId() {
+
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 

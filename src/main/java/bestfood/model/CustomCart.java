@@ -1,34 +1,56 @@
 package bestfood.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "custom_carts")
 public class CustomCart {
-    private int userId;
-    private int productId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
     private int quantity;
 
     public CustomCart() {
     }
 
-    public CustomCart(int userId, int productId, int quantity) {
-        this.userId = userId;
-        this.productId = productId;
+    public CustomCart(User user, Product product, int quantity) {
+        this.user = user;
+        this.product = product;
         this.quantity = quantity;
     }
 
-    // Getters and Setters
-    public int getUserId() {
-        return userId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public int getProductId() {
-        return productId;
+    public User getUser() {
+        return user;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public int getQuantity() {

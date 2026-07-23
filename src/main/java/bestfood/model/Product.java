@@ -1,10 +1,24 @@
 package bestfood.model;
 
+import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@Entity
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@Table(name = "products")
 public class Product {
-    private int id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     private String name;
     private String image;
-    private int categoryId;
     private int quantity;
     private float price;
     private int weight;
@@ -16,12 +30,12 @@ public class Product {
     public Product() {
     }
 
-    public Product(int id, String name, String image, int categoryId, int quantity, float price, int weight,
+    public Product(Integer id, String name, String image, Category category, int quantity, float price, int weight,
             String description, double discount) {
         this.id = id;
         this.name = name;
         this.image = image;
-        this.categoryId = categoryId;
+        this.category = category;
         this.quantity = quantity;
         this.price = price;
         this.weight = weight;
@@ -32,12 +46,21 @@ public class Product {
     }
 
     // Getters and Setters
-    public int getId() {
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public String getName() {
@@ -54,14 +77,6 @@ public class Product {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
     }
 
     public int getQuantity() {

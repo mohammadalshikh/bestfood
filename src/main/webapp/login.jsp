@@ -165,7 +165,7 @@
             </div>
             <div class="login-container" id="loginContainer">
                 <h2>User Login</h2>
-                <form action="userloginvalidate" method="post">
+                <form action="/login" method="post">
 
                     <div class="form-group">
                         <input type="text" name="username" id="username" placeholder="Username" required class="form-control form-control-lg">
@@ -182,7 +182,7 @@
                     <span>Don't have an account? <a class="linkControl" href="#" data-toggle="modal" data-target="#registrationModal">Register here</a></span>
                     <br>
 
-                    <span>Admin login page from <a class="linkControl" href="/admin">here</a></span>
+                    <span>Admin login page from <a class="linkControl" href="/admin/login">here</a></span>
                 </form>
             </div>
 
@@ -200,7 +200,7 @@
                         </div>
 
                         <div class="modal-body">
-                            <form action="newuserregister" method="post" class="registration-form" id="registrationForm">
+                            <form action="/register" method="post" class="registration-form" id="registrationForm">
                                 <div class="form-group">
                                     <label for="email" style="display: block; width: 100%; text-align: left;">Email address</label>
                                     <input type="email" class="form-control form-control-lg" required minlength="6" required name="email" id="email" aria-describedby="emailHelp" oninput="validateEmail()">

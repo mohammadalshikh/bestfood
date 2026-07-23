@@ -1,211 +1,215 @@
 package bestfood.controller;
 
 import bestfood.model.*;
-import bestfood.service.JsonDatabaseService;
+import bestfood.service.*;
 
 import java.text.DecimalFormat;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class AdminController {
 
-    @Value("${app.data.dir}")
-    private String dataDir;
+    @Autowired
+    private UserService userService;
 
     @Autowired
-    private JsonDatabaseService db;
+    private ProductService productService;
 
-    int adminlogcheck = 0;
-    public static String usernameforclass = "";
+    @Autowired
+    private CategoryService categoryService;
 
-    public static void setUsername(String usernameforclass) {
-        AdminController.usernameforclass = usernameforclass;
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private CustomCartService customCartService;
+
+    @Autowired
+    private ProductMatrixService productMatrixService;
+
+    @Autowired
+    private SupabaseStorageService storageService;
+
+    @GetMapping("/admin/login")
+    public String adminLoginPage() {
+
+        return "admin/login";
     }
 
-    @RequestMapping(value = { "/", "/logout" })
-    public String returnIndex() {
-        adminlogcheck = 0;
-        usernameforclass = "";
-        UserController.setUsername("");
-        return "userLogin";
-    }
-
-    @GetMapping("/index")
-    public String index(Model model) {
-        if (usernameforclass.equalsIgnoreCase(""))
-            return "userLogin";
-        else {
-            model.addAttribute("username", usernameforclass);
-            UserController.setUsername(usernameforclass);
-            return "index";
-        }
-
-    }
-
-    @GetMapping("/userloginvalidate")
-    public String userlog(Model model) {
-
-        return "userLogin";
-    }
-
-    @RequestMapping(value = "userloginvalidate", method = RequestMethod.POST)
-    public String userlogin(@RequestParam("username") String username, @RequestParam("password") String pass,
-            Model model) {
-        User user = db.getUserByUsernameAndPassword(username, pass);
-        if (user != null) {
-            usernameforclass = user.getUsername();
-            UserController.setUsername(usernameforclass);
-            AdminController.setUsername(usernameforclass);
-            return "redirect:/index";
-        } else {
-            model.addAttribute("failMessage", "Invalid Username or Password");
-            return "userLogin";
-        }
-    }
-
-    public int getUserID() {
-        User user = db.getUserByUsername(usernameforclass);
-        return user != null ? user.getUserId() : 0;
-    }
-
-    @GetMapping("/admin")
-    public String adminlogin(Model model) {
-
-        return "adminlogin";
-    }
-
-    @GetMapping("/adminhome")
-    public String adminHome(Model model) {
-        if (adminlogcheck != 0)
-            return "adminHome";
-        else
-            return "redirect:/admin";
-    }
-
-    @GetMapping("/loginvalidate")
-    public String adminlog(Model model) {
-
-        return "adminlogin";
-    }
-
-    @RequestMapping(value = "loginvalidate", method = RequestMethod.POST)
-    public String adminlogin(@RequestParam("username") String username, @RequestParam("password") String pass,
-            Model model) {
-
-        if (username.equalsIgnoreCase("admin") && pass.equalsIgnoreCase("123")) {
-            adminlogcheck = 1;
-            return "redirect:/adminhome";
-        } else {
-            model.addAttribute("message", "Invalid Username or Password");
-            return "adminlogin";
-        }
-    }
 
     @GetMapping("/admin/categories")
-    public String getcategory(Model model) {
-        List<Category> categories = db.getAllCategories();
+    public String categories(Model model) {
+
+        List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
+
         return "categories";
     }
 
-    @RequestMapping(value = "admin/sendcategory", method = RequestMethod.GET)
-    public String addcategorytodb(@RequestParam("categoryname") String catname) {
-        db.addCategory(catname);
+    @PostMapping("/admin/categories")
+    public String addCategory(@RequestParam("categoryname") String categoryName) {
+
+        categoryService.addCategory(categoryName);
+
         return "redirect:/admin/categories";
     }
 
-    @GetMapping("/admin/categories/delete")
-    public String removeCategoryDb(@RequestParam("id") int id) {
-        db.deleteCategory(id);
+    @PostMapping("/admin/categories/{id}/delete")
+    public String deleteCategory(@PathVariable int id) {
+
+        categoryService.deleteCategory(id);
         updateProductPairs();
+
         return "redirect:/admin/categories";
     }
 
-    @GetMapping("/admin/categories/update")
-    public String updateCategoryDb(@RequestParam("categoryid") int id,
-            @RequestParam("categoryname") String categoryname) {
-        db.updateCategory(id, categoryname);
+    @PostMapping("/admin/categories/{id}")
+    public String updateCategory(@PathVariable int id, @RequestParam("categoryname") String categoryName) {
+
+        categoryService.updateCategory(id, categoryName);
+
         return "redirect:/admin/categories";
     }
 
     @GetMapping("/admin/products")
-    public String getproduct(Model model) {
-        List<Product> products = db.getAllProducts();
-        List<Category> categories = db.getAllCategories();
+    public String getProducts(Model model) {
+
+        List<Product> products = productService.getAllProducts();
+        List<Category> categories = categoryService.getAllCategories();
+
         model.addAttribute("products", products);
         model.addAttribute("categories", categories);
         return "products";
     }
 
-    @GetMapping("/admin/products/add")
-    public String addproduct(Model model) {
-        List<Category> categories = db.getAllCategories();
-        List<Product> products = db.getAllProducts();
+    @GetMapping("/admin/products/new")
+    public String getAddProduct(Model model) {
+
+        List<Category> categories = categoryService.getAllCategories();
+        List<Product> products = productService.getAllProducts();
+
         int nextId = products.stream().mapToInt(Product::getId).max().orElse(0) + 1;
+
         model.addAttribute("categories", categories);
         model.addAttribute("nextProductId", nextId);
-        return "productsAdd";
+
+        return "product-add";
     }
 
     @GetMapping("/admin/products/update")
-    public String updateproduct(@RequestParam("pid") int id, Model model) {
-        Product product = db.getProductById(id);
+    public String updateproduct(
+            @RequestParam("pid") int id,
+            Model model) {
+
+        Product product = productService.getProductById(id);
+
         if (product != null) {
-            model.addAttribute("pid", product.getId());
-            model.addAttribute("pname", product.getName());
-            model.addAttribute("pimage", product.getImage());
-            Category category = db.getCategoryById(product.getCategoryId());
-            if (category != null) {
-                model.addAttribute("pcategory", category.getName());
+
+            model.addAttribute(
+                    "pid",
+                    product.getId());
+
+            model.addAttribute(
+                    "pname",
+                    product.getName());
+
+            model.addAttribute(
+                    "pimage",
+                    product.getImage());
+
+            if (product.getCategory() != null) {
+
+                model.addAttribute(
+                        "pcategory",
+                        product.getCategory().getName());
             }
-            model.addAttribute("pquantity", product.getQuantity());
-            model.addAttribute("pprice", product.getPrice());
-            model.addAttribute("pweight", product.getWeight());
-            model.addAttribute("pdescription", product.getDescription());
-            model.addAttribute("pdiscount", product.getDiscount());
+
+            model.addAttribute(
+                    "pquantity",
+                    product.getQuantity());
+
+            model.addAttribute(
+                    "pprice",
+                    product.getPrice());
+
+            model.addAttribute(
+                    "pweight",
+                    product.getWeight());
+
+            model.addAttribute(
+                    "pdescription",
+                    product.getDescription());
+
+            model.addAttribute(
+                    "pdiscount",
+                    product.getDiscount());
         }
+
         return "productsUpdate";
     }
 
     @RequestMapping(value = "admin/products/updateData", method = RequestMethod.POST)
-    public String updateproducttodb(@RequestParam("id") int id, @RequestParam("name") String name,
-            @RequestParam("price") float price, @RequestParam("weight") int weight,
-            @RequestParam("quantity") int quantity, @RequestParam("description") String description,
+    public String updateproducttodb(
+            @RequestParam("id") int id,
+            @RequestParam("name") String name,
+            @RequestParam("price") float price,
+            @RequestParam("weight") int weight,
+            @RequestParam("quantity") int quantity,
+            @RequestParam("description") String description,
             @RequestParam(value = "productImage", required = false) MultipartFile file,
             @RequestParam(value = "oldImagePath", required = false) String oldImagePath,
-            @RequestParam("discount") double discount) throws java.io.IOException {
+            @RequestParam("discount") double discount)
+            throws java.io.IOException {
 
         String imagePath = oldImagePath;
 
         if (file != null && !file.isEmpty()) {
-            String fileName = file.getOriginalFilename();
-            java.nio.file.Path path = java.nio.file.Paths.get(dataDir + "/uploads/" + fileName);
-            java.nio.file.Files.createDirectories(path.getParent());
-            java.nio.file.Files.write(path, file.getBytes());
-            imagePath = "/uploads/" + fileName;
+            imagePath = storageService.upload(file);
         }
 
-        db.updateProduct(id, name, imagePath, quantity, price, weight, description, discount);
+        productService.updateProduct(
+                id,
+                name,
+                imagePath,
+                quantity,
+                price,
+                weight,
+                description,
+                discount);
+
         return "redirect:/admin/products";
     }
 
     public void updateProductStockFromCart(String username) {
-        User user = db.getUserByUsername(username);
+
+        User user = userService.getUserByUsername(username);
+
         if (user != null) {
-            List<Cart> cartItems = db.getCartByUserId(user.getUserId());
+
+            List<Cart> cartItems = cartService.getCartByUserId(
+                    user.getUserId());
+
             for (Cart cart : cartItems) {
-                if (cart.getProductId() != 0) {
-                    Product product = db.getProductById(cart.getProductId());
+
+                if (cart.getProduct() != null) {
+
+                    Product product = productService.getProductById(
+                            cart.getProduct().getId());
+
                     if (product != null) {
-                        int newQuantity = product.getQuantity() - cart.getQuantity();
-                        db.updateProductQuantity(product.getId(), newQuantity);
+
+                        int newQuantity = product.getQuantity()
+                                - cart.getQuantity();
+
+                        productService.updateProductQuantity(
+                                product.getId(),
+                                newQuantity);
                     }
                 }
             }
@@ -213,203 +217,394 @@ public class AdminController {
     }
 
     public void updateUserCouponsFromCart(String username) {
-        User user = db.getUserByUsername(username);
+
+        User user = userService.getUserByUsername(username);
+
         if (user != null) {
-            Cart couponCart = db.getCartItem(user.getUserId(), 0);
+
+            Cart couponCart = cartService.getCartItem(
+                    user.getUserId(),
+                    0);
+
             if (couponCart != null) {
-                int newCoupons = user.getCoupons() - couponCart.getQuantity();
-                db.updateUserCoupons(user.getUserId(), newCoupons);
+
+                int newCoupons = user.getCoupons()
+                        - couponCart.getQuantity();
+
+                user.setCoupons(newCoupons);
+
+                userService.saveUser(user);
             }
         }
     }
 
     public void updateUserTotalAndCoupons(String username) {
-        User user = db.getUserByUsername(username);
+
+        User user = userService.getUserByUsername(username);
+
         if (user != null) {
+
             float currentTransaction = getOrderTotal(username);
-            float cumulativeTotal = user.getCumulativeTotal() + currentTransaction;
+
+            float cumulativeTotal = user.getCumulativeTotal()
+                    + currentTransaction;
 
             if ((int) cumulativeTotal / 100 != 0) {
+
                 int newCoupons = (int) cumulativeTotal / 100;
+
                 cumulativeTotal = cumulativeTotal % 100;
-                db.updateUserCoupons(user.getUserId(), user.getCoupons() + newCoupons);
+
+                user.setCoupons(
+                        user.getCoupons()
+                                + newCoupons);
             }
 
-            db.updateUserCumulativeTotal(user.getUserId(), cumulativeTotal);
+            user.setCumulativeTotal(
+                    cumulativeTotal);
+
+            userService.saveUser(user);
         }
     }
 
     public int getCouponsForUser(String username) {
-        User user = db.getUserByUsername(username);
-        return user != null ? user.getCoupons() : 0;
+
+        User user = userService.getUserByUsername(username);
+
+        return user != null
+                ? user.getCoupons()
+                : 0;
     }
 
     @RequestMapping(value = "/applyCoupon", method = RequestMethod.POST)
-    public String applyCoupon(@RequestParam("apply") int coupons) {
-        int userId = getUserID();
-        User user = db.getUserByUsername(usernameforclass);
+    public String applyCoupon(
+            @RequestParam("apply") int coupons) {
 
-        if (user == null || coupons > user.getCoupons() || coupons < 0) {
+        int userId = getUserID();
+
+        User user = userService.getUserByUsername(
+                usernameForClass);
+
+        if (user == null
+                || coupons > user.getCoupons()
+                || coupons < 0) {
+
             return "redirect:/buy";
         }
 
-        if (db.getCartItem(userId, 0) != null) {
-            db.updateCartItemQuantity(userId, 0, coupons);
+        Cart couponCart = cartService.getCartItem(
+                userId,
+                0);
+
+        if (couponCart != null) {
+
+            cartService.updateCartItemQuantity(
+                    userId,
+                    0,
+                    coupons);
+
         } else {
-            db.addToCart(userId, 0, coupons);
+
+            cartService.addItemToCart(
+                    userId,
+                    0,
+                    coupons);
         }
+
         return "redirect:/buy";
     }
 
     public int getCouponsApplied(String username) {
-        User user = db.getUserByUsername(username);
+
+        User user = userService.getUserByUsername(username);
+
         if (user != null) {
-            Cart couponCart = db.getCartItem(user.getUserId(), 0);
-            return couponCart != null ? couponCart.getQuantity() : 0;
+
+            Cart couponCart = cartService.getCartItem(
+                    user.getUserId(),
+                    0);
+
+            return couponCart != null
+                    ? couponCart.getQuantity()
+                    : 0;
         }
+
         return 0;
     }
 
     @GetMapping("/admin/products/delete")
-    public String removeProductDb(@RequestParam("id") int id) {
-        db.deleteProduct(id);
+    public String removeProductDb(
+            @RequestParam("id") int id) {
+
+        productService.deleteProduct(id);
+
         updateProductPairs();
+
         return "redirect:/admin/products";
     }
 
     @PostMapping("/admin/products")
     public String postproduct() {
+
         return "redirect:/admin/categories";
     }
 
     @RequestMapping(value = "admin/products/sendData", method = RequestMethod.POST)
-    public String addproducttodb(@RequestParam("name") String name, @RequestParam("categoryid") String catid,
-            @RequestParam("price") float price, @RequestParam("weight") int weight,
-            @RequestParam("quantity") int quantity, @RequestParam("description") String description,
+    public String addproducttodb(
+            @RequestParam("name") String name,
+            @RequestParam("categoryid") String catid,
+            @RequestParam("price") float price,
+            @RequestParam("weight") int weight,
+            @RequestParam("quantity") int quantity,
+            @RequestParam("description") String description,
             @RequestParam("productImage") MultipartFile file,
-            @RequestParam("discount") double discount) throws java.io.IOException {
+            @RequestParam("discount") double discount)
+            throws java.io.IOException {
 
-        String fileName = file.getOriginalFilename();
-        java.nio.file.Path path = java.nio.file.Paths.get(dataDir + "/uploads/" + fileName);
-        java.nio.file.Files.createDirectories(path.getParent());
-        java.nio.file.Files.write(path, file.getBytes());
+        String imagePath = storageService.upload(file);
 
-        String imagePath = "/uploads/" + fileName;
+        Category category = categoryService.getCategoryByName(catid);
 
-        Category category = db.getCategoryByName(catid);
         if (category != null) {
-            db.addProduct(name, imagePath, category.getCategoryId(), quantity, price, weight, description, discount);
+
+            productService.addProduct(
+                    name,
+                    imagePath,
+                    category.getCategoryId(),
+                    quantity,
+                    price,
+                    weight,
+                    description,
+                    discount);
         }
+
         return "redirect:/admin/products";
     }
 
     public void updateProductPairs() {
-        List<ProductMatrix> matrices = db.getAllProductMatrices();
+
+        List<ProductMatrix> matrices = productMatrixService.getAllProductMatrices();
+
         for (ProductMatrix matrix : matrices) {
-            Map.Entry<Integer, Integer> maxPair = db.getMaxPairForProduct(matrix.getProduct());
+
+            ProductPair maxPair = productMatrixService.getMaxPairForProduct(
+                    matrix.getProduct().getId());
+
             if (maxPair != null) {
-                db.updateProductPair(matrix.getProduct(), maxPair.getKey());
+
+                productService.updateProductPair(
+                        matrix.getProduct().getId(),
+                        maxPair.getPairedProduct().getId());
             }
         }
     }
 
     @GetMapping("/suggestItem")
-    public String suggestItem(@RequestParam("productID") int productID, @RequestParam("suggestedID") int suggestedID) {
-        db.updateProductSuggestedItem(productID, suggestedID);
+    public String suggestItem(
+            @RequestParam("productID") int productID,
+            @RequestParam("suggestedID") int suggestedID) {
+
+        productService.updateProductSuggestedItem(
+                productID,
+                suggestedID);
+
         return "redirect:/admin/products";
     }
 
-    public float getProductPrice(int productID, int quantity) {
-        Product product = db.getProductById(productID);
+    public float getProductPrice(
+            int productID,
+            int quantity) {
+
+        Product product = productService.getProductById(productID);
+
         if (product != null) {
+
             float productPrice = product.getPrice();
+
             double discountFromPrice = 1 - product.getDiscount();
+
             productPrice *= quantity;
+
             productPrice *= discountFromPrice;
+
             return productPrice;
         }
+
         return 0;
     }
 
     public float getCartPrice(String username) {
+
         float runningTotal = 0;
-        User user = db.getUserByUsername(username);
+
+        User user = userService.getUserByUsername(username);
+
         if (user != null) {
-            List<Cart> cartItems = db.getCartByUserId(user.getUserId());
+
+            List<Cart> cartItems = cartService.getCartByUserId(
+                    user.getUserId());
+
             for (Cart cart : cartItems) {
-                runningTotal += getProductPrice(cart.getProductId(), cart.getQuantity());
+
+                if (cart.getProduct() != null) {
+
+                    runningTotal += getProductPrice(
+                            cart.getProduct().getId(),
+                            cart.getQuantity());
+                }
             }
         }
-        return runningTotal < 0 ? 0 : runningTotal;
+
+        return runningTotal < 0
+                ? 0
+                : runningTotal;
     }
 
     public float getCustomCartPrice(String username) {
+
         float runningTotal = 0;
-        User user = db.getUserByUsername(username);
+
+        User user = userService.getUserByUsername(username);
+
         if (user != null) {
-            List<CustomCart> customCartItems = db.getCustomCartByUserId(user.getUserId());
+
+            List<CustomCart> customCartItems = customCartService.getCustomCartByUserId(
+                    user.getUserId());
+
             for (CustomCart cart : customCartItems) {
-                runningTotal += getProductPrice(cart.getProductId(), cart.getQuantity());
+
+                if (cart.getProduct() != null) {
+
+                    runningTotal += getProductPrice(
+                            cart.getProduct().getId(),
+                            cart.getQuantity());
+                }
             }
         }
-        return runningTotal < 0 ? 0 : runningTotal;
+
+        return runningTotal < 0
+                ? 0
+                : runningTotal;
     }
 
     public float getTotalAfterTexesNoCoup(String username) {
-        double cartPrice = getCartPrice(username);
-        float totalAfterTexesNoCoup = (float) (cartPrice * 1.15);
 
-        return totalAfterTexesNoCoup;
+        double cartPrice = getCartPrice(username);
+
+        return (float) (cartPrice * 1.15);
     }
 
     public float getOrderTotal(String username) {
+
         float orderTotal = getCartPrice(username);
+
         orderTotal *= 1.15;
 
         int noOfCoupons = getCouponsApplied(username);
-        User user = db.getUserByUsername(username);
+
+        User user = userService.getUserByUsername(username);
 
         if (user != null) {
+
             for (int i = 0; i < noOfCoupons; i++) {
+
                 orderTotal -= 5;
+
                 if (orderTotal <= 0) {
-                    db.updateCartItemQuantity(user.getUserId(), 0, i);
+
+                    cartService.updateCartItemQuantity(
+                            user.getUserId(),
+                            0,
+                            i);
+
                     orderTotal = 0;
+
                     break;
                 }
             }
         }
+
         return orderTotal;
     }
 
     @GetMapping("/admin/customers")
     public String getCustomerDetail(Model model) {
-        model.addAttribute("users", db.getAllUsers());
+
+        model.addAttribute(
+                "users",
+                userService.getAllUsers());
+
         return "displayCustomers";
     }
 
     @RequestMapping(value = "updateuser", method = RequestMethod.POST)
-    public String updateUserProfile(@RequestParam("userid") int userid, @RequestParam("username") String username,
-            @RequestParam("email") String email, @RequestParam("password") String password,
+    public String updateUserProfile(
+            @RequestParam("userid") int userid,
+            @RequestParam("username") String username,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
             @RequestParam("address") String address) {
-        db.updateUser(userid, username, email, password, address);
-        usernameforclass = username;
+
+        User user = userService.getUserById(userid);
+
+        if (user != null) {
+
+            user.setUsername(username);
+
+            user.setEmail(email);
+
+            user.setPassword(password);
+
+            user.setAddress(address);
+
+            userService.saveUser(user);
+        }
+
+        usernameForClass = username;
+
         return "redirect:/index";
     }
 
     @GetMapping("profileDisplay")
     public String profileDisplay(Model model) {
-        User user = db.getUserByUsername(usernameforclass);
+
+        User user = userService.getUserByUsername(
+                usernameForClass);
+
         if (user != null) {
-            String displaytotal = new DecimalFormat("0.00").format(user.getCumulativeTotal());
-            model.addAttribute("userid", user.getUserId());
-            model.addAttribute("username", user.getUsername());
-            model.addAttribute("email", user.getEmail());
-            model.addAttribute("password", user.getPassword());
-            model.addAttribute("address", user.getAddress());
-            model.addAttribute("userCoupons", user.getCoupons());
-            model.addAttribute("cumulativeTotal", displaytotal);
+
+            String displaytotal = new DecimalFormat("0.00")
+                    .format(user.getCumulativeTotal());
+
+            model.addAttribute(
+                    "userid",
+                    user.getUserId());
+
+            model.addAttribute(
+                    "username",
+                    user.getUsername());
+
+            model.addAttribute(
+                    "email",
+                    user.getEmail());
+
+            model.addAttribute(
+                    "password",
+                    user.getPassword());
+
+            model.addAttribute(
+                    "address",
+                    user.getAddress());
+
+            model.addAttribute(
+                    "userCoupons",
+                    user.getCoupons());
+
+            model.addAttribute(
+                    "cumulativeTotal",
+                    displaytotal);
         }
+
         return "updateProfile";
     }
 

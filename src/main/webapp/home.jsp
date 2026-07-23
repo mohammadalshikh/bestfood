@@ -1,3 +1,5 @@
+<%@page import="bestfood.model.Product" %>
+<%@page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -240,83 +242,54 @@
         <br>
         <section class="restaurant-section">
             <div class="container">
-                
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="restaurant-item">
-                            <img src="/images/banana.png" alt="Banana">
-                            <div class="container">
-                                <br>
-                                <h4>Banana - 2.0$</h4>
-                                <form action="/addtocart" method="get" id="ac1">
-                                    <input hidden type="number" name="productID" value="6">
-                                    <input hidden type="number" name="quantity" value="1">
-                                    <button style="background-color: #E74B3C; border-color: #E74B3C;" type="submit" class="btn btn-primary btn-lg">
-                                        <i class="fas fa-shopping-cart"></i> Add to Cart
-                                    </button>
-                                </form>
-                                <br>
-                                <form action="/addtocustomcart" method="get" id="acc1">
-                                    <input hidden type="number" name="productID" value="6">
-                                    <input hidden type="number" name="quantity" value="1">
-                                    <button style="background-color: #027BFF; font-size: 14px;" type="submit"
-                                        class="btn btn-primary btn-lg">
-                                        <i class="fas fa-shopping-cart"></i> Add to Custom Cart
-                                    </button>
-                                </form>
+        
+                    <% List<Product> products = (List<Product>) request.getAttribute("products");
+                    int count = 0;
+                    if (products != null) {
+                        for (Product product : products) {
+                            if (count >= 3) {
+                                break;
+                            }
+                            count++; %>
+                            <div class="col-md-4">
+                                <div class="restaurant-item">
+                                    <img src="<%= product.getImage() %>" alt="<%= product.getName() %>">
+                                    <div class="container">
+                                        <br>
+                                        <h4>
+                                            <%= product.getName() %> - <%= product.getPrice() %>$
+                                        </h4>
+        
+                                        <form action="/addtocart" method="get">
+                                            <input hidden type="number" name="productID" value="<%= product.getId() %>">
+        
+                                            <input hidden type="number" name="quantity" value="1">
+        
+                                            <button style="background-color: #E74B3C; border-color: #E74B3C;" type="submit" class="btn btn-primary btn-lg">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                Add to Cart
+                                            </button>
+        
+                                        </form>
+        
+                                        <br>
+        
+                                        <form action="/addtocustomcart" method="get">
+                                            <input hidden type="number" name="productID" value="<%= product.getId() %>">
+                                            <input hidden type="number" name="quantity" value="1">
+                                            <button style="background-color: #027BFF; font-size: 14px;" type="submit" class="btn btn-primary btn-lg">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                Add to Custom Cart
+                                            </button>
+        
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="restaurant-item">
-                            <img src="/images/orange.png" alt="Orange" >
-                            <br><br>
-                            <h4>Orange - 3.0$</h4>
-                            <form action="/addtocart" method="get" id="ac2">
-                                <input hidden type="number" name="productID" value="1">
-                                <input hidden type="number" name="quantity" value="1">
-                                <button style="background-color: #E74B3C; border-color: #E74B3C;" type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                                </button>
-                            </form>
-                            <br>
-                            <form action="/addtocustomcart" method="get" id="acc2">
-                                <input hidden type="number" name="productID" value="1">
-                                <input hidden type="number" name="quantity" value="1">
-                                <button style="background-color: #027BFF; font-size: 14px;" type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-shopping-cart"></i> Add to Custom Cart
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="restaurant-item">
-                            <img src="/images/watermelon.png"
-                                alt="Watermelon">
-                            <br><br>
-                            <h4>Watermelon - 10.0$</h4>
-                            <form action="/addtocart" method="get" id="ac3">
-                                <input hidden type="number" name="productID" value="5">
-                                <input hidden type="number" name="quantity" value="1">
-                                <button style="background-color: #E74B3C; border-color: #E74B3C;" type="submit"
-                                    class="btn btn-primary btn-lg">
-                                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                                </button>
-                            </form>
-                            <br>
-                            <form action="/addtocustomcart" method="get" id="acc3">
-                                <input hidden type="number" name="productID" value="5">
-                                <input hidden type="number" name="quantity" value="1">
-                                <button style="background-color: #027BFF; font-size: 14px;" type="submit"
-                                    class="btn btn-primary btn-lg">
-                                    <i class="fas fa-shopping-cart"></i> Add to Custom Cart
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
+        
+                    <% } } %>
+        
                 </div>
             </div>
         </section>
@@ -340,75 +313,70 @@
             function handleSearch() {
                 const query = searchInput.value.trim();
 
-                if (query !== '') {
-                    const sampleResults = [
-                        'Apple',
-                        'Banana',
-                        'Grapes',
-                        'Orange',
-                        'Pineapple',
-                        'Beef',
-                        'Lettuce',
-                        'Tomato',
-                        'Corn',
-                        'Cucumber',
-                        'Watermelon',
-                        'Potato',
-                        'Onion',
-                        'Cherry'
-                    ];
-
-                    const filteredResults = sampleResults.filter(result => result.toLowerCase().includes(query.toLowerCase()));
-
-                    displaySearchResults(filteredResults);
-                } else {
+                if (query === '') {
                     searchResults.style.display = 'none';
+                    return;
                 }
+
+                fetch('/search?query=' + encodeURIComponent(query))
+                    .then(response => response.json())
+                    .then(products => {
+                        displaySearchResults(products);
+                    });
             }
 
-            function displaySearchResults(results) {
-                searchResults.innerHTML = '';
 
-                if (results.length > 0) {
-                    for (let i = 0; i < Math.min(results.length, 3); i++) {
+            function displaySearchResults(products) {
+
+                searchResults.innerHTML = '';
+                if (products.length > 0) {
+                    for (let i = 0; i < Math.min(products.length, 5); i++) {
+
+                        const product = products[i];
                         const li = document.createElement('li');
-                        li.textContent = results[i];
+                        li.textContent = product.name + " - $" + product.price;
+                        li.dataset.id = product.id;
                         searchResults.appendChild(li);
-                    }
-                    if (results.length > 3) {
-                        const viewAllLi = document.createElement('li');
-                        viewAllLi.textContent = 'View all results';
-                        viewAllLi.addEventListener('click', () => {
-                        });
-                        searchResults.appendChild(viewAllLi);
+
                     }
                     searchResults.style.display = 'block';
+
                 } else {
                     const li = document.createElement('li');
-                    li.textContent = 'No results found.';
+                    li.textContent = "No results found.";
                     searchResults.appendChild(li);
                     searchResults.style.display = 'block';
+
                 }
             }
 
             searchResults.addEventListener('click', function (event) {
+
                 if (event.target.tagName === 'LI') {
-                    searchInput.value = event.target.textContent;
-                    searchResults.style.display = 'none';
+
+                    const productId = event.target.dataset.id;
+
+                    if (productId) {
+                        window.location.href = "/addtocart?productID=" + productId + "&quantity=1";
+                    }
                 }
             });
 
             document.addEventListener('click', function (event) {
+
                 const target = event.target;
-                if (!target.matches('.search-input') && !target.matches('#searchResults li')) {
+
+                if (!target.matches('.search-input')
+                    && !target.matches('#searchResults li')) {
+
                     searchResults.style.display = 'none';
                 }
             });
 
             searchInput.addEventListener('keypress', function (event) {
+                
                 if (event.key === 'Enter') {
                     event.preventDefault();
-                    const query = searchInput.value.trim();
                 }
             });
         </script>

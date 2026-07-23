@@ -1,5 +1,5 @@
 <%@page import="bestfood.model.Category" %>
-<%@page import="java.util.*" %>
+<%@page import="java.util.List" %>
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 

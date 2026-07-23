@@ -27,7 +27,7 @@
             
             <div class="jumbotron border col-sm-5 mx-auto">
                 <h2 class="text-center">Admin Login</h2><br>
-                <form action="loginvalidate" method="post">
+                <form action="/admin/login" method="post">
                     <div class="form-group">
                         <input type="text" name="username" id="username" placeholder="Username" required class="form-control form-control-lg border border-danger">
                     </div>

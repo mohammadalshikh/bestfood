@@ -13,7 +13,7 @@ public class AdminControllerTest {
     public void TestSetUsername() {
         String username = "user";
         AdminController.setUsername("user");
-        assertEquals(username, AdminController.usernameforclass);
+        assertEquals(username, AdminController.usernameForClass);
     }
 
     @Test
@@ -22,7 +22,7 @@ public class AdminControllerTest {
 
         // Create an instance of the class under test
         AdminController adminController = new AdminController();
-        String result = adminController.returnIndex();
+        String result = adminController.userLogin();
 
         // Verify that the method `setUsername` was called with an empty string
         verify(userControllerMock, times(1)).setUsername("");
@@ -32,12 +32,12 @@ public class AdminControllerTest {
 
     @Test
     public void testIndexMethodWithEmptyUsername() {
-        AdminController.usernameforclass = "";
+        AdminController.usernameForClass = "";
         AdminController adminController = new AdminController();
         UserController userControllerMock = mock(UserController.class);
         Model model = mock(Model.class);
 
-        String result = adminController.index(model);
+        String result = adminController.userHome(model);
 
         // Verify that the method `setUsername` was not called
         verifyNoInteractions(userControllerMock);
@@ -50,10 +50,10 @@ public class AdminControllerTest {
         AdminController adminController = new AdminController();
         Model modelMock = mock(Model.class);
         String username = "non_empty";
-        AdminController.usernameforclass = username;
+        AdminController.usernameForClass = username;
         UserController userControllerMock = mock(UserController.class);
 
-        String result = adminController.index(modelMock);
+        String result = adminController.userHome(modelMock);
 
         // Verify that the model contains the attribute "username" with the expected
         // value
@@ -66,7 +66,7 @@ public class AdminControllerTest {
     public void TestUserLog() {
         AdminController adminController = new AdminController();
         Model model = mock(Model.class);
-        String result = adminController.userlog(model);
+        String result = adminController.userLogin(model);
         // Verify that the return value is as expected
         assertEquals("userLogin", result);
     }

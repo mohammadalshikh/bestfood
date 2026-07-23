@@ -189,7 +189,7 @@
             <h1>My Cart</h1>
 
             <div class="d-flex justify-content-end mb-3">
-                <form action="/clearcart" method="get">
+                <form action="/delete-cart" method="get">
                     <button type="submit" id="clearCart" class="btn btn-action">Clear cart</button>
                 </form>
                 
@@ -232,7 +232,7 @@
                                 <td style="width: 250px">$<%= item.getTotalPrice() %>
                                 </td>
                                 <td>
-                                    <a href="/deleteitem?productID=<%= item.getProductID() %>" class="btn btn-delete">Remove</a>
+                                    <a href="/delete-cart-item?productID=<%= item.getProductID() %>" class="btn btn-delete">Remove</a>
                                 </td>
                             </tr>
                         <% } %>
