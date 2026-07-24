@@ -2,10 +2,8 @@ package bestfood.service;
 
 import bestfood.model.User;
 import bestfood.repo.UserRepo;
-
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.List;
 
 @Service
@@ -14,9 +12,7 @@ public class UserService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(
-            UserRepo userRepo,
-            PasswordEncoder passwordEncoder) {
+    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder) {
 
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
@@ -27,42 +23,35 @@ public class UserService {
     }
 
     public User getUserById(Integer id) {
-        return userRepo.findById(id)
-                .orElse(null);
+        return userRepo.findById(id).orElse(null);
     }
 
     public User getUserByUsername(String username) {
         return userRepo.findByUsername(username);
     }
 
-    public User authenticate(
-            String username,
-            String password) {
+    public User authenticate(String username, String password) {
 
         User user = userRepo.findByUsername(username);
 
-        if (user != null &&
-                passwordEncoder.matches(password, user.getPassword())) {
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
 
             return user;
         }
-
         return null;
     }
 
     public boolean isUsernameExists(String username) {
+
         return userRepo.existsByUsername(username);
     }
 
     public boolean isEmailExists(String email) {
+
         return userRepo.existsByEmail(email);
     }
 
-    public User addUser(
-            String username,
-            String password,
-            String email,
-            String address) {
+    public User createUser(String username, String password, String email, String address) {
 
         User user = new User();
 
@@ -71,22 +60,18 @@ public class UserService {
         user.setEmail(email);
         user.setAddress(address);
         user.setRole("ROLE_USER");
-        user.setCoupons(0);
+        user.setOwnedCoupons(0);
         user.setCumulativeTotal(0);
 
         return userRepo.save(user);
     }
 
     public User saveUser(User user) {
+
         return userRepo.save(user);
     }
 
-    public void updateUser(
-            int userId,
-            String username,
-            String email,
-            String password,
-            String address) {
+    public void updateUser(int userId, String username, String email, String password, String address) {
 
         User user = getUserById(userId);
 
@@ -101,23 +86,31 @@ public class UserService {
         }
     }
 
-    public void updateUserCoupons(
-            int userId,
-            int coupons) {
+    public void deleteUser(Integer id) {
+        
+        userRepo.deleteById(id);
+    }
+
+    public int getOwnedCouponsCount(int userId) {
+
+        User user = getUserById(userId);
+
+        return user != null ? user.getOwnedCoupons() : 0;
+    }
+
+    public void updateOwnedCouponsCount(int userId, int coupons) {
 
         User user = getUserById(userId);
 
         if (user != null) {
 
-            user.setCoupons(coupons);
+            user.setOwnedCoupons(coupons);
 
             userRepo.save(user);
         }
     }
 
-    public void updateUserCumulativeTotal(
-            int userId,
-            float total) {
+    public void updateUserCumulativeTotal(int userId, float total) {
 
         User user = getUserById(userId);
 
@@ -129,7 +122,4 @@ public class UserService {
         }
     }
 
-    public void deleteUser(Integer id) {
-        userRepo.deleteById(id);
-    }
 }

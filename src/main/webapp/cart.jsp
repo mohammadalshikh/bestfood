@@ -150,38 +150,7 @@
 
     <body>
         <div class="bg-image-wrapper">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container">
-                    <a class="navbar-brand" href="/index">
-                        BestFood
-                    </a>
-
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/shop">Shop</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/cart">Cart</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profileDisplay">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/">Logout</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </nav>
+            <%@ include file="/fragments/navbar.jsp" %>
         </div>
 
         <div class="container">
@@ -189,26 +158,34 @@
             <h1>My Cart</h1>
 
             <div class="d-flex justify-content-end mb-3">
-                <form action="/delete-cart" method="get">
-                    <button type="submit" id="clearCart" class="btn btn-action">Clear cart</button>
-                </form>
-                
-                <form action="/movecustomtocart" method="get">
-                    <button id="add" type="submit" class="btn btn-action">Add custom cart to cart</button>
+                <form action="/cart/clear" method="post">
+                    <button type="submit" id="clearCart" class="btn btn-action">
+                        Clear cart
+                    </button>
                 </form>
 
-                <a id="show" href="/custom-cart" class="btn btn-action">Show custom cart</a>
+                <form action="/custom-cart/add-to-cart" method="post">
+                    <button id="add" type="submit" class="btn btn-action">
+                        Add custom cart to cart
+                    </button>
+                </form>
+
+                <a id="show" href="/custom-cart" class="btn btn-action">
+                    Show custom cart
+                </a>
 
                 <input id="edit" type="button" value="Edit quantities" class="btn btn-action" onClick="editMode()">
 
-                <button id="confirm" hidden type="submit" form="updateQuantity" class="btn btn-action">Confirm changes</button>
+                <button id="confirm" hidden type="submit" form="updateQuantity" class="btn btn-action">
+                    Confirm changes
+                </button>
                 
                 <input hidden id="cancel" type="button" value="Cancel" class="btn btn-action" onClick="cancel()">
 
             </div>
             <br>
 
-            <form action="/updateCartItemQuantity" id="updateQuantity" method="get">
+            <form action="/cart/items/quantities/update" id="updateQuantity" method="post">
                 <table class="table" id="cartTable">
                     <thead>
                     <tr>
@@ -224,15 +201,25 @@
                         for (CartItem item : cartItems) { %>
                             <tr>
                                 <td></td>
-                                <td style="width: 250px" id="1"><%= item.getProductName() %></td>
                                 <td style="width: 250px">
-                                    <input pattern="[1-9][0-9]*" min="1" style="width: 80px" class="disabled-input" disabled type="number" name="<%= item.getProductID() %>|quantity" value="<%= item.getQuantity() %>">
-                                    <input type="hidden" name="productIDs" value="<%= item.getProductID() %>">
+                                    <%= item.getProduct().getName() %>
                                 </td>
-                                <td style="width: 250px">$<%= item.getTotalPrice() %>
+                                <td style="width: 250px">
+                                    <input pattern="[1-9][0-9]*" min="1" style="width: 80px" class="disabled-input" disabled
+                                        type="number" name="<%= item.getProduct().getId() %>|quantity"
+                                        value="<%= item.getQuantity() %>">
+
+                                    <input type="hidden" name="productIDs" value="<%= item.getProduct().getId() %>">
+                                </td>
+                                <td style="width: 250px">
+                                    $<%= item.getTotalNoTaxNoCoupons() %>
                                 </td>
                                 <td>
-                                    <a href="/delete-cart-item?productID=<%= item.getProductID() %>" class="btn btn-delete">Remove</a>
+                                    <form action="/cart/items/<%= item.getProduct().getId() %>/remove" method="post">
+                                        <button type="submit" class="btn btn-delete">
+                                            Remove
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         <% } %>
@@ -245,8 +232,8 @@
                 <br><br>
                 <a href="/shop">Go to shop page</a>
             </p>
-            <p id="total">Total: $${total}</p>
-            <a id="checkOut" href="/buy" class="btn btn-delete">Check out</a>
+            <p id="total">Total: $${totalNoTaxNoCoupons}</p>
+            <a id="checkOut" href="/checkout" class="btn btn-delete">Check out</a>
         </div>
 
         <br><br>

@@ -84,37 +84,7 @@
 
     <body>
         <div class="bg-image-wrapper">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container">
-                    <a class="navbar-brand" href="/index">
-                        BestFood
-                    </a>
-                    
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/shop">Shop</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/cart">Cart</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profileDisplay">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/">Logout</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            <%@ include file="/fragments/navbar.jsp" %>
         </div>
         <div class="container py-5">
             <div><img src="/images/contact.jpg" alt="Contact Us" class="img-contact">
@@ -123,7 +93,7 @@
             <h1 class="text-center">Contact Us</h1>
             <div class="row justify-content-center">
                 <div class="col-md-6">
-                    <form action="/submitContact" method="post">
+                    <form action="/contact" method="post">
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input type="text" class="form-control" id="name" name="name" required>

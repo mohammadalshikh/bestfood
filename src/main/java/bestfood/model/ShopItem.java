@@ -5,14 +5,14 @@ public class ShopItem {
     private String image;
     private String productName;
     private float price;
-    private int productID;
+    private int productId;
     private String suggestedItem;
 
-    public ShopItem(String image, String productName, float price, int productID, String suggestedItem) {
+    public ShopItem(String image, String productName, float price, int productId, String suggestedItem) {
         this.image = image;
         this.productName = productName;
         this.price = price;
-        this.productID = productID;
+        this.productId = productId;
         this.suggestedItem = suggestedItem;
     }
 
@@ -28,11 +28,12 @@ public class ShopItem {
         return price;
     }
 
-    public int getProductID() {
-        return productID;
+    public int getProductId() {
+        return productId;
     }
 
     public String getSuggestedItem() {
         return suggestedItem;
     }
+    
 }

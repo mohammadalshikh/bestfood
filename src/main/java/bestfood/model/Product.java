@@ -1,20 +1,15 @@
 package bestfood.model;
 
 import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-@Table(name = "products")
+@Entity @Table(name = "products") @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "category_id")
     private Category category;
 
     private String name;
@@ -27,11 +22,19 @@ public class Product {
     private int productPair;
     private int suggestedItem;
 
-    public Product() {
-    }
+    public Product() {}
 
-    public Product(Integer id, String name, String image, Category category, int quantity, float price, int weight,
-            String description, double discount) {
+    public Product(
+        Integer id,
+        String name,
+        String image,
+        Category category,
+        int quantity,
+        float price,
+        int weight,
+        String description,
+        double discount) {
+
         this.id = id;
         this.name = name;
         this.image = image;
@@ -44,8 +47,6 @@ public class Product {
         this.productPair = 0;
         this.suggestedItem = 0;
     }
-
-    // Getters and Setters
 
     public Integer getId() {
         return id;
@@ -134,4 +135,5 @@ public class Product {
     public void setSuggestedItem(int suggestedItem) {
         this.suggestedItem = suggestedItem;
     }
+    
 }

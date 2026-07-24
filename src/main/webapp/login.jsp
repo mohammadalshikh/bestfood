@@ -168,11 +168,11 @@
                 <form action="/login" method="post">
 
                     <div class="form-group">
-                        <input type="text" name="username" id="username" placeholder="Username" required class="form-control form-control-lg">
+                        <input type="text" name="login-username" id="login-username" placeholder="Username" required class="form-control form-control-lg">
                     </div>
 
                     <div class="form-group">
-                        <input type="password" class="form-control form-control-lg" placeholder="Password" required name="password" id="password">
+                        <input type="password" name="login-password" id="login-password" placeholder="Password" required class="form-control form-control-lg">
                     </div>
 
                     <p class="error-message">${failMessage}</p>
@@ -202,20 +202,20 @@
                         <div class="modal-body">
                             <form action="/register" method="post" class="registration-form" id="registrationForm">
                                 <div class="form-group">
-                                    <label for="email" style="display: block; width: 100%; text-align: left;">Email address</label>
-                                    <input type="email" class="form-control form-control-lg" required minlength="6" required name="email" id="email" aria-describedby="emailHelp" oninput="validateEmail()">
+                                    <label for="register-email" style="display: block; width: 100%; text-align: left;">Email address</label>
+                                    <input type="email" class="form-control form-control-lg" required minlength="6" required name="register-email" id="register-email" aria-describedby="emailHelp">
                                     <div class="text-left"><span id="emailError" class="error-message"></span></div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="firstName" style="display: block; width: 100%; text-align: left;">Username</label>
-                                    <input type="text" name="username" id="firstName" required class="form-control form-control-lg" oninput="validateUsername()">
+                                    <label for="register-username" style="display: block; width: 100%; text-align: left;">Username</label>
+                                    <input type="text" name="register-username" id="register-username" required class="form-control form-control-lg">
                                     <div class="text-left"><span id="usernameError" class="error-message"></span></div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="passwordd" style="display: block; width: 100%; text-align: left;">Password</label>
-                                    <input type="password" class="form-control form-control-lg" required name="password" id="passwordd" 
+                                    <label for="register-passwordd" style="display: block; width: 100%; text-align: left;">Password</label>
+                                    <input type="password" class="form-control form-control-lg" required name="register-password" id="register-passwordd" 
                                     pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?><]).{8,}" 
                                     title="Must contain: at least one number, one uppercase letter, one lowercase letter, one special character, and 8 or more characters"
                                     required>
@@ -227,8 +227,8 @@
                                 </div>
                                 
                                 <div id="opt" class="form-group">
-                                    <label for="address" style="display: block; width: 100%; text-align: left;">Address</label>
-                                    <input class="form-control form-control-lg" rows="3" id="address" placeholder="Optional" name="address"></input>
+                                    <label for="register-address" style="display: block; width: 100%; text-align: left;">Address</label>
+                                    <input class="form-control form-control-lg" rows="3" id="register-address" placeholder="Optional" name="register-address"></input>
                                 </div>
 
                                 <input id="submitBtn" type="submit" disabled value="Register" class="btn btn-danger btn-block"><br>
@@ -260,7 +260,7 @@
             }
 
             function showPassword() {
-                var x = document.getElementById("passwordd");
+                var x = document.getElementById("register-passwordd");
                 if (x.type === "password") {
                     x.type = "text";
                 } else {
@@ -271,23 +271,23 @@
             function checkUsernameAvailability(username) {
                 return $.ajax({
                     type: "GET",
-                    url: "/checkUsernameAvailability",
-                    data: { username: username },
+                    url: "/users/check-username",
+                    data: { "register-username": username },
                 });
             }
 
             function checkEmailAvailability(email) {
                 return $.ajax({
                     type: "GET",
-                    url: "/checkEmailAvailability",
-                    data: { email: email },
+                    url: "/users/check-email",
+                    data: { "register-email": email },
                 });
             }
 
             function updateSubmitButtonState() {
-                var username = document.getElementById("firstName").value;
-                var email = document.getElementById("email").value;
-                var password = document.getElementById("passwordd").value;
+                var username = document.getElementById("register-username").value;
+                var password = document.getElementById("register-passwordd").value;
+                var email = document.getElementById("register-email").value;
                 var isValid = true;
 
                 if (!username) {
@@ -318,7 +318,7 @@
                 submitButton.disabled = !isValid;
             }
 
-            document.getElementById("firstName").addEventListener("input", function () {
+            document.getElementById("register-username").addEventListener("input", function () {
                 var username = this.value;
                 if (username) {
                     checkUsernameAvailability(username)
@@ -344,7 +344,7 @@
                 }
             });
 
-            document.getElementById("email").addEventListener("input", function () {
+            document.getElementById("register-email").addEventListener("input", function () {
                 var email = this.value;
                 if (email) {
                     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -377,7 +377,7 @@
                 }
             });
 
-            document.getElementById("passwordd").addEventListener("input", function () {
+            document.getElementById("register-passwordd").addEventListener("input", function () {
                 updateSubmitButtonState();
             });
 

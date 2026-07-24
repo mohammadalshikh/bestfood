@@ -4,10 +4,8 @@ import bestfood.model.Category;
 import bestfood.model.Product;
 import bestfood.repo.CategoryRepo;
 import bestfood.repo.ProductRepo;
-
-import java.util.List;
-
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class CategoryService {
@@ -15,8 +13,7 @@ public class CategoryService {
     private final CategoryRepo categoryRepo;
     private final ProductRepo productRepo;
 
-    public CategoryService(CategoryRepo categoryRepo,
-            ProductRepo productRepo) {
+    public CategoryService(CategoryRepo categoryRepo, ProductRepo productRepo) {
 
         this.categoryRepo = categoryRepo;
         this.productRepo = productRepo;
@@ -25,30 +22,27 @@ public class CategoryService {
     public List<Category> getAllCategories() {
 
         return categoryRepo.findAll();
-
     }
 
     public Category getCategoryById(int categoryId) {
 
-        return categoryRepo.findById(categoryId)
-                .orElse(null);
-
+        return categoryRepo
+            .findById(categoryId)
+            .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
     public Category getCategoryByName(String name) {
 
         return categoryRepo.findByName(name);
-
     }
 
-    public Category addCategory(String name) {
+    public Category createCategory(String name) {
 
         Category category = new Category();
 
         category.setName(name);
 
         return categoryRepo.save(category);
-
     }
 
     public Category updateCategory(int categoryId, String name) {
@@ -62,7 +56,6 @@ public class CategoryService {
         category.setName(name);
 
         return categoryRepo.save(category);
-
     }
 
     public void deleteCategory(int categoryId) {
@@ -77,17 +70,13 @@ public class CategoryService {
 
         for (Product product : products) {
 
-            if (product.getCategory() != null &&
-                    product.getCategory().getCategoryId().equals(categoryId)) {
+            if (product.getCategory() != null && product.getCategory().getId().equals(categoryId)) {
 
                 productRepo.delete(product);
-
             }
-
         }
 
         categoryRepo.delete(category);
-
     }
 
 }

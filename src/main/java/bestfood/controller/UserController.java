@@ -2,30 +2,20 @@ package bestfood.controller;
 
 import bestfood.model.*;
 import bestfood.service.*;
-
-import java.util.*;
-
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.util.MultiValueMap;
+import javax.servlet.http.HttpSession;
+import java.text.DecimalFormat;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 @Controller
 public class UserController {
-
-    @Value("${spring.mail.username}")
-    private String mailUsername;
-
-    @Value("${spring.mail.password}")
-    private String mailPassword;
 
     @Autowired
     private UserService userService;
@@ -40,24 +30,34 @@ public class UserController {
     private CustomCartService customCartService;
 
     @Autowired
-    private TransactionHistoryService transactionHistoryService;
+    private ContactService contactService;
 
     @Autowired
-    private ProductMatrixService productMatrixService;
+    private CheckoutService checkoutService;
 
-    @Autowired
-    private AdminController adminController;
+    @GetMapping("/")
+    public String landingPage(HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (user != null) {
+            return "redirect:/home";
+        }
+
+        return "redirect:/login";
+    }
 
     @GetMapping("/login")
     public String loginPage() {
-
         return "login";
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam("username") String username, @RequestParam("password") String password,
-            HttpSession session,
-            Model model) {
+    public String logIn(
+        @RequestParam("login-username") String username,
+        @RequestParam("login-password") String password,
+        HttpSession session,
+        Model model) {
 
         User user = userService.authenticate(username, password);
 
@@ -71,12 +71,12 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password,
-            @RequestParam("email") String email,
-            @RequestParam(value = "address", required = false) String address,
-            Model model) {
+    public String registerUser(
+        @RequestParam("register-username") String username,
+        @RequestParam("register-password") String password,
+        @RequestParam("register-email") String email,
+        @RequestParam(value = "register-address", required = false) String address,
+        Model model) {
 
         if (userService.isUsernameExists(username)) {
 
@@ -90,28 +90,102 @@ public class UserController {
             return "login";
         }
 
-        userService.addUser(username, password, email, address);
+        userService.createUser(username, password, email, address);
+
         return "redirect:/login";
     }
-    
+
+    @ResponseBody @GetMapping("/users/check-username")
+    public Map<String, Boolean> checkUsername(@RequestParam("register-username") String username) {
+
+        return Map.of("exists", userService.isUsernameExists(username));
+    }
+
+    @ResponseBody @GetMapping("/users/check-email")
+    public Map<String, Boolean> checkEmail(@RequestParam("register-email") String email) {
+
+        return Map.of("exists", userService.isEmailExists(email));
+    }
+
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logOut(HttpSession session) {
 
         session.invalidate();
 
         return "redirect:/login";
     }
 
+    @GetMapping("/home")
+    public String homePage(HttpSession session, Model model) {
+
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("products", productService.getAllProducts());
+
+        return "home";
+    }
+
     @GetMapping("/contact")
-    public String contact() {
+    public String contactPage() {
         return "contact";
     }
 
-    @GetMapping("shop")
-    public String shop(Model model) {
+    @PostMapping("/contact")
+    public String requestContact(
+        @RequestParam("name") String name,
+        @RequestParam("email") String email,
+        @RequestParam("subject") String subject,
+        @RequestParam("message") String message,
+        @RequestParam(value = "subscribe", required = false) boolean subscribe,
+        @RequestParam("inquiry-type") String inquiryType,
+        RedirectAttributes redirectAttributes) {
+
+        String userMessage = 
+            "Dear " + name + ",\n\n"
+            + "Thank you for contacting us. Your request has been received.\n\n"
+            + "Here is a summary of your message:\n\n" + "Name: " + name + "\n" + "Email: " + email
+            + "\n"
+            + "Subject: " + subject + "\n" + "Message: " + message + "\n"
+            + "Subscribe to newsletter: "
+            + (subscribe ? "Yes" : "No") + "\n" + "Inquiry Type: " + inquiryType + "\n\n"
+            + "We will get back to you as soon as possible.\n\n" + "Best regards,\n"
+            + "The BestFood Team";
+
+        contactService.sendEmail(
+            email,
+            "bestfood102@gmail.com",
+            "Your Contact Request",
+            userMessage
+        );
+
+        String adminMessage = 
+            "A new contact request has been submitted:\n\n" + "Name: " + name
+            + "\n" + "Email: "
+            + email + "\n" + "Subject: " + subject + "\n" + "Message: " + message + "\n"
+            + "Subscribe to newsletter: " + (subscribe ? "Yes" : "No") + "\n" + "Inquiry Type: "
+            + inquiryType;
+
+        contactService.sendEmail(
+            "bestfood102@gmail.com",
+            email,
+            "New Contact Request",
+            adminMessage
+        );
+
+        redirectAttributes.addFlashAttribute(
+            "successMessage",
+            "Your contact request has been submitted successfully!"
+        );
+
+        return "redirect:/contact";
+    }
+
+    @GetMapping("/shop")
+    public String shopPage(Model model) {
 
         ArrayList<ShopItem> shopItems = new ArrayList<>();
-
         List<Product> products = productService.getAllProducts();
 
         for (Product product : products) {
@@ -124,467 +198,225 @@ public class UserController {
             if (product.getSuggestedItem() != 0) {
 
                 Product suggested = productService.getProductById(product.getSuggestedItem());
-
                 if (suggested != null) {
                     suggestedItem = suggested.getName();
                 }
             }
 
-            shopItems.add(new ShopItem(
+            shopItems.add(
+                new ShopItem(
                     product.getImage(),
                     product.getName(),
                     product.getPrice(),
                     product.getId(),
-                    suggestedItem));
+                    suggestedItem
+                )
+            );
         }
 
         model.addAttribute("shopItems", shopItems);
-
         return "shop";
     }
 
-    @RequestMapping(value = "submit-contact", method = RequestMethod.POST)
-    public String submitContact(
-            @RequestParam("name") String name,
-            @RequestParam("email") String email,
-            @RequestParam("subject") String subject,
-            @RequestParam("message") String message,
-            @RequestParam(value = "subscribe", required = false) boolean subscribe,
-            @RequestParam("inquiry-type") String inquiryType,
-            Model model,
-            RedirectAttributes redirectAttributes) {
+    @GetMapping("/profile")
+    public String profilePage(HttpSession session, Model model) {
 
-        String userMessage = "Dear " + name + ",\n\nThank you for contacting us. Your request has been received. " +
-                "Here is a summary of your message:\n\n" +
-                "Name: " + name + "\n" +
-                "Email: " + email + "\n" +
-                "Subject: " + subject + "\n" +
-                "Message: " + message + "\n" +
-                "Subscribe to newsletter: " + (subscribe ? "Yes" : "No") + "\n" +
-                "Inquiry Type: " + inquiryType + "\n\n" +
-                "We will get back to you as soon as possible.\n\nBest regards,\nThe BestFood Team";
+        String username = (String) session.getAttribute("username");
 
-        sendEmail(email, "bestfood102@gmail.com", "Your Contact Request", userMessage);
-
-        String adminMessage = "A new contact request has been submitted:\n\n" +
-                "Name: " + name + "\n" +
-                "Email: " + email + "\n" +
-                "Subject: " + subject + "\n" +
-                "Message: " + message + "\n" +
-                "Subscribe to newsletter: " + (subscribe ? "Yes" : "No") + "\n" +
-                "Inquiry Type: " + inquiryType + "\n";
-
-        sendEmail("bestfood102@gmail.com", email, "New Contact Request", adminMessage);
-
-        redirectAttributes.addFlashAttribute(
-                "successMessage",
-                "Your contact request has been submitted successfully!");
-
-        return "redirect:/contact";
-    }
-
-    private void sendEmail(String recipient, String sender, String subject, String body) {
-
-        String host = "smtp.gmail.com";
-        String port = "587";
-
-        Properties props = new Properties();
-
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-
-        Session session = Session.getInstance(props, new Authenticator() {
-
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(mailUsername, mailPassword);
-            }
-        });
-
-        try {
-
-            Message message = new MimeMessage(session);
-
-            message.setFrom(new InternetAddress(sender));
-            message.setRecipients(
-                    Message.RecipientType.TO,
-                    InternetAddress.parse(recipient));
-
-            message.setSubject(subject);
-            message.setText(body);
-
-            Transport.send(message);
-
-            System.out.println("Email sent successfully to " + recipient);
-
-        } catch (MessagingException e) {
-
-            e.printStackTrace();
-            System.err.println("Failed to send email to " + recipient);
-        }
-    }
-
-    @GetMapping("/buy")
-    public String buy(Model model) {
-
-        model.addAttribute(
-                "total",
-                adminController.getCartPrice(usernameforclass));
-
-        model.addAttribute(
-                "orderTotal",
-                adminController.getOrderTotal(usernameforclass));
-
-        model.addAttribute(
-                "totalAfterTexesNoCoup",
-                adminController.getTotalAfterTexesNoCoup(usernameforclass));
-
-        model.addAttribute(
-                "couponsForUser",
-                adminController.getCouponsForUser(usernameforclass));
-
-        model.addAttribute(
-                "couponsApplied",
-                adminController.getCouponsApplied(usernameforclass));
-
-        return "/buy";
-    }
-
-    @ResponseBody
-    @GetMapping("/check-username-availability")
-    public Map<String, Boolean> checkUsernameAvailability(@RequestParam("username") String username) {
-
-        Map<String, Boolean> response = new HashMap<>();
-
-        response.put("exists", userService.isUsernameExists(username));
-
-        return response;
-    }
-
-    @ResponseBody
-    @GetMapping("/check-email-availability")
-    public Map<String, Boolean> checkEmailAvailability(@RequestParam("email") String email) {
-
-        Map<String, Boolean> response = new HashMap<>();
-
-        response.put("exists", userService.isEmailExists(email));
-
-        return response;
-    }
-
-    @RequestMapping(value = "add-user", method = RequestMethod.POST)
-    public String addUser(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password,
-            @RequestParam("email") String email,
-            @RequestParam("address") String address) {
-
-        userService.addUser(username, password, email, address);
-
-        return "redirect:/";
-    }
-
-    @GetMapping("clear-cart")
-    public String clearCart() {
-
-        User user = userService.getUserByUsername(usernameforclass);
-
-        if (user != null) {
-            cartService.clearCart(user.getUserId());
-        }
-
-        return "redirect:/cart";
-    }
-
-    @GetMapping("clear-custom-cart")
-    public String clearCustomCart() {
-
-        User user = userService.getUserByUsername(usernameforclass);
-
-        if (user != null) {
-            customCartService.clearCustomCart(user.getUserId());
-        }
-
-        return "redirect:/custom-cart";
-    }
-
-    @GetMapping("add-custom-cart-to-cart")
-    public String addCustomCartToCart() {
-
-        User user = userService.getUserByUsername(usernameforclass);
+        User user = userService.getUserByUsername(username);
 
         if (user != null) {
 
-            customCartService.moveCustomCartToCart(
-                    user.getUserId());
+            String cumulativeTotal = new DecimalFormat("0.00").format(user.getCumulativeTotal());
+
+            model.addAttribute("username", user.getUsername());
+            model.addAttribute("email", user.getEmail());
+            model.addAttribute("password", user.getPassword());
+            model.addAttribute("address", user.getAddress());
+            model.addAttribute("ownedCoupons", user.getOwnedCoupons());
+            model.addAttribute("cumulativeTotal", cumulativeTotal);
         }
 
-        return "redirect:/cart";
+        return "profile";
     }
 
-    @GetMapping("remove-cart-item")
-    public String removeCartItem(@RequestParam("productID") int productID) {
+    @PostMapping("/profile/update")
+    public String updateProfile(
+        @RequestParam("username") String username,
+        @RequestParam("email") String email,
+        @RequestParam("password") String password,
+        @RequestParam("address") String address) {
 
-        User user = userService.getUserByUsername(usernameforclass);
+        userService.updateUser(userService.getUserByUsername(username).getId(), username, email, password, address);
 
-        if (user != null) {
-            cartService.removeCartItem(user.getUserId(), productID);
-        }
-
-        return "redirect:/cart";
-    }
-
-    @GetMapping("remove-custom-cart-item")
-    public String removeCustomCartItem(@RequestParam("productID") int productID) {
-
-        User user = userService.getUserByUsername(usernameforclass);
-
-        if (user != null) {
-            customCartService.removeCustomCartItem(user.getUserId(), productID);
-        }
-
-        return "redirect:/custom-cart";
-    }
-
-    @GetMapping("add-item-to-cart")
-    public String addItemToCart(
-            @RequestParam("productID") int productID,
-            @RequestParam("quantity") int quantity) {
-
-        User user = userService.getUserByUsername(usernameforclass);
-
-        if (user != null) {
-
-            cartService.addItemToCart(user.getUserId(), productID, quantity);
-        }
-        return "redirect:/cart";
-    }
-
-    @GetMapping("add-item-to-custom-cart")
-    public String addItemToCustomCart(
-            @RequestParam("productID") int productID,
-            @RequestParam("quantity") int quantity) {
-
-        User user = userService.getUserByUsername(usernameforclass);
-
-        if (user != null) {
-
-            customCartService.addItemToCustomCart(user.getUserId(), productID, quantity);
-        }
-
-        return "redirect:/custom-cart";
-    }
-
-    @RequestMapping(value = "/buy-cart", method = RequestMethod.POST)
-    public String buyCart() {
-
-        User user = userService.getUserByUsername(usernameforclass);
-
-        if (user != null) {
-
-            int transactionID = transactionHistoryService.getMaxTransactionId(user.getUserId()) + 1;
-
-            Set<Integer> products = new HashSet<>();
-
-            List<Cart> cartItems = cartService.getCartByUserId(user.getUserId());
-
-            for (Cart cart : cartItems) {
-
-                transactionHistoryService.addTransactionHistory(
-                        user.getUserId(),
-                        cart.getProduct().getId(),
-                        cart.getQuantity(),
-                        transactionID);
-
-                if (cart.getProduct().getId() != 0) {
-                    products.add(cart.getProduct().getId());
-                }
-            }
-
-            if (products.size() >= 2) {
-
-                for (int p : products) {
-
-                    for (int q : products) {
-
-                        if (p != q) {
-
-                            ProductMatrix pm = productMatrixService.getProductMatrix(p);
-
-                            if (pm != null) {
-
-                                int oldCount = pm.getPairCount(
-                                        productService.getProductById(q));
-
-                                productMatrixService.updateProductMatrixPair(
-                                        p,
-                                        q,
-                                        oldCount + 1);
-                            }
-                        }
-                    }
-                }
-            }
-
-            adminController.updateProductPairs();
-
-            adminController.updateProductStockFromCart(
-                    usernameforclass);
-
-            adminController.updateUserCouponsFromCart(
-                    usernameforclass);
-
-            adminController.updateUserTotalAndCoupons(
-                    usernameforclass);
-
-            cartService.clearCart(
-                    user.getUserId());
-        }
-
-        return "redirect:/cart";
+        return "redirect:/profile";
     }
 
     @GetMapping("/cart")
-    public String cart(Model model) {
+    public String cartPage(Model model, HttpSession session) {
 
-        ArrayList<CartItem> cartItems = new ArrayList<>();
+        String username = (String) session.getAttribute("username");
 
-        int userId = adminController.getUserID();
+        User user = userService.getUserByUsername(username);
 
-        List<Cart> carts = cartService.getCartByUserId(userId);
-
-        for (Cart cart : carts) {
-            if (cart.getProduct().getId() != 0) {
-                Product product = productService.getProductById(cart.getProduct().getId());
-
-                if (product != null) {
-                    float totalPrice = adminController.getProductPrice(
-                            cart.getProduct().getId(),
-                            cart.getQuantity());
-
-                    cartItems.add(
-                            new CartItem(
-                                    product.getName(),
-                                    cart.getQuantity(),
-                                    totalPrice,
-                                    cart.getProduct().getId()));
-                }
-            }
+        if (user == null) {
+            return "redirect:/login";
         }
 
-        model.addAttribute(
-                "cartItems",
-                cartItems);
+        int userId = user.getId();
 
-        model.addAttribute(
-                "total",
-                adminController.getCartPrice(usernameforclass));
+        List<CartItem> cartItems = cartService.getCartItemsByUserId(userId);
+
+        model.addAttribute("cartItems", cartItems);
+
+        model.addAttribute("totalNoTaxNoCoupons", cartService.getTotalNoTaxNoCoupons(userId));
 
         return "cart";
     }
 
-    @GetMapping("update-cart-item-quantity")
-    public String updateCartItemQuantity(
-            @RequestParam MultiValueMap<String, String> params) {
+    @PostMapping("/cart/items")
+    public String addItemToCart(
+        @RequestParam("product-id") int id, 
+        @RequestParam("product-quantity") int quantity,
+        HttpSession session) {
 
-        int userId = adminController.getUserID();
+        String username = (String) session.getAttribute("username");
 
-        for (String key : params.keySet()) {
+        User user = userService.getUserByUsername(username);
 
-            if (key.matches(".+\\|quantity")) {
+        if (user != null) {
+            cartService.addCartItem(user.getId(), id, quantity);
+        }
 
-                String productIDString = key.substring(0, key.indexOf('|'));
+        return "redirect:/cart";
+    }
 
-                String quantityString = params.getFirst(key);
+    @PostMapping("/cart/items/quantities/update")
+    public String updateCartItemsQuantities(
+        @RequestParam MultiValueMap<String, String> params,
+        HttpSession session) {
 
-                int productID = Integer.parseInt(productIDString);
+        String username = (String) session.getAttribute("username");
 
-                int quantity = Integer.parseInt(quantityString);
+        User user = userService.getUserByUsername(username);
 
-                if (quantity != 0) {
-                    cartService.updateCartItemQuantity(userId, productID, quantity);
-                } else {
-                    addItemToCart(productID, quantity);
+        if (user != null) {
+
+            int userId = user.getId();
+
+            for (String key : params.keySet()) {
+
+                if (key.matches(".+\\|quantity")) {
+
+                    String productIdString = key.substring(0, key.indexOf('|'));
+                    String quantityString = params.getFirst(key);
+
+                    int productId = Integer.parseInt(productIdString);
+                    int quantity = Integer.parseInt(quantityString);
+
+                    cartService.updateCartItemQuantity(userId, productId, quantity);
                 }
             }
         }
+
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/cart/clear")
+    public String clearCart(HttpSession session) {
+
+        String username = (String) session.getAttribute("username");
+
+        User user = userService.getUserByUsername(username);
+
+        if (user != null) {
+            cartService.removeCartItems(user.getId());
+        }
+
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/cart/items/{productId}/remove")
+    public String removeCartItem(@PathVariable int productId, HttpSession session) {
+
+        String username = (String) session.getAttribute("username");
+
+        User user = userService.getUserByUsername(username);
+
+        if (user != null) {
+            cartService.removeCartItem(user.getId(), productId);
+        }
+
         return "redirect:/cart";
     }
 
     @GetMapping("/custom-cart")
-    public String customCart(Model model) {
+    public String customCart(Model model, HttpSession session) {
 
-        ArrayList<CustomCartItem> customCartItems = new ArrayList<>();
+        String username = (String) session.getAttribute("username");
 
-        int userId = adminController.getUserID();
+        User user = userService.getUserByUsername(username);
 
-        List<CustomCart> customCarts = customCartService.getCustomCartByUserId(userId);
-
-        for (CustomCart cart : customCarts) {
-
-            if (cart.getProduct().getId() != 0) {
-
-                Product product = productService.getProductById(
-                        cart.getProduct().getId());
-
-                if (product != null) {
-
-                    float totalPrice = adminController.getProductPrice(
-                            cart.getProduct().getId(),
-                            cart.getQuantity());
-
-                    customCartItems.add(
-                            new CustomCartItem(
-                                    product.getName(),
-                                    cart.getQuantity(),
-                                    totalPrice,
-                                    cart.getProduct().getId()));
-                }
-            }
+        if (user == null) {
+            return "redirect:/login";
         }
 
-        model.addAttribute(
-                "customCartItems",
-                customCartItems);
+        int userId = user.getId();
 
         model.addAttribute(
-                "total",
-                adminController.getCustomCartPrice(usernameforclass));
+            "customCartItems", 
+            customCartService.getCustomCartItemsByUserId(userId)
+        );
+
+        model.addAttribute(
+            "totalNoTaxNoCoupons",
+            customCartService.getTotalNoTaxNoCoupons(userId)
+        );
 
         return "custom-cart";
     }
 
-    @GetMapping("update-custom-cart-item-quantity")
-    public String updateCustomCartItemQuantity(
-            @RequestParam MultiValueMap<String, String> params) {
+    @PostMapping("/custom-cart/items")
+    public String addItemToCustomCart(
+        @RequestParam("product-id") int id,
+        @RequestParam("product-quantity") int quantity,
+        HttpSession session) {
 
-        int userId = adminController.getUserID();
+        String username = (String) session.getAttribute("username");
 
-        for (String key : params.keySet()) {
+        User user = userService.getUserByUsername(username);
 
-            if (key.matches(".+\\|quantity")) {
+        if (user != null) {
+            customCartService.addCustomCartItem(user.getId(), id, quantity);
+        }
 
-                String productIDString = key.substring(0, key.indexOf('|'));
+        return "redirect:/custom-cart";
+    }
 
-                String quantityString = params.getFirst(key);
+    @PostMapping("/custom-cart/items/quantities/update")
+    public String updateCustomCartItemsQuantities(
+        @RequestParam MultiValueMap<String, String> params,
+        HttpSession session) {
 
-                int productID = Integer.parseInt(productIDString);
+        String username = (String) session.getAttribute("username");
 
-                int quantity = Integer.parseInt(quantityString);
+        User user = userService.getUserByUsername(username);
 
-                if (quantity != 0) {
+        if (user != null) {
 
-                    customCartService.updateCustomCartItemQuantity(
-                            userId,
-                            productID,
-                            quantity);
+            int userId = user.getId();
 
-                } else {
+            for (String key : params.keySet()) {
 
-                    addItemToCustomCart(
-                            productID,
-                            quantity);
+                if (key.matches(".+\\|quantity")) {
+
+                    String productIdString = key.substring(0, key.indexOf('|'));
+                    String quantityString = params.getFirst(key);
+
+                    int productId = Integer.parseInt(productIdString);
+                    int quantity = Integer.parseInt(quantityString);
+
+                    customCartService.updateCustomCartItemQuantity(userId, productId, quantity);
                 }
             }
         }
@@ -592,10 +424,117 @@ public class UserController {
         return "redirect:/custom-cart";
     }
 
-    @GetMapping("/search")
+    @PostMapping("/custom-cart/clear")
+    public String clearCustomCart(HttpSession session) {
+
+        String username = (String) session.getAttribute("username");
+
+        User user = userService.getUserByUsername(username);
+
+        if (user != null) {
+            customCartService.removeCustomCartItems(user.getId());
+        }
+
+        return "redirect:/custom-cart";
+    }
+
+    @PostMapping("/custom-cart/items/{productId}/remove")
+    public String removeCustomCartItem(@PathVariable int productId, HttpSession session) {
+
+        String username = (String) session.getAttribute("username");
+
+        User user = userService.getUserByUsername(username);
+
+        if (user != null) {
+            customCartService.removeCustomCartItem(user.getId(), productId);
+        }
+
+        return "redirect:/custom-cart";
+    }
+
+    @PostMapping("/custom-cart/add-to-cart")
+    public String addCustomCartToCart(HttpSession session) {
+
+        String username = (String) session.getAttribute("username");
+
+        User user = userService.getUserByUsername(username);
+
+        if (user != null) {
+            customCartService.addCustomCartToCart(user.getId());
+        }
+
+        return "redirect:/cart";
+    }
+
+    @GetMapping("/checkout")
+    public String checkoutPage(HttpSession session, Model model) {
+
+        String username = (String) session.getAttribute("username");
+
+        User user = userService.getUserByUsername(username);
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        int userId = user.getId();
+
+        model.addAttribute(
+            "totalNoTaxNoCoupons",
+            cartService.getTotalNoTaxNoCoupons(userId)
+        );
+        model.addAttribute(
+            "totalAfterTaxNoCoupons",
+            checkoutService.getTotalAfterTaxNoCoupons(userId)
+        );
+        model.addAttribute(
+            "totalFinal",
+            checkoutService.getTotalFinal(userId)
+        );
+        model.addAttribute(
+            "couponsApplied",
+            checkoutService.getAppliedCouponsCount(userId)
+        );
+        model.addAttribute(
+            "couponsOwned",
+            userService.getOwnedCouponsCount(userId)
+        );
+
+        return "checkout";
+    }
+
+    @PostMapping("/checkout")
+    public String checkOut(HttpSession session) {
+
+        String username = (String) session.getAttribute("username");
+
+        User user = userService.getUserByUsername(username);
+
+        if (user != null) {
+            checkoutService.checkOut(user.getId());
+        }
+
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/checkout/coupons")
+    public String updateAppliedCoupons(
+        @RequestParam("coupons-count") int couponsCount,
+        HttpSession session) {
+
+        String username = (String) session.getAttribute("username");
+        User user = userService.getUserByUsername(username);
+
+        if (user != null) {
+            checkoutService.updateAppliedCouponsCount(user.getId(), couponsCount);
+        }
+
+        return "redirect:/checkout";
+    }
+
+    @GetMapping("/search") 
     @ResponseBody
-    public List<Product> searchProducts(
-            @RequestParam String query) {
+    public List<Product> searchProducts(@RequestParam String query) {
 
         return productService.searchProducts(query);
     }

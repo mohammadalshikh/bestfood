@@ -1,3 +1,5 @@
+<%@page import="bestfood.model.Category" %>
+<%@page import="java.util.List" %>
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
@@ -17,69 +19,65 @@
         <%@ include file="/fragments/admin-navbar.jsp" %>
         <br>
         <div class="jumbotron container border border-info">
-            <h3>Update existing product</h3>
-            <form action="/admin/products/${product.id}/update" method="post" enctype="multipart/form-data">
+            <h3>Add a new product</h3>
+            <form action="/admin/products/create" method="post" enctype="multipart/form-data">
                 <div class="row">
-
                     <div class="col-sm-5">
-                        <div class="form-group">
-                            <label for="product-id">Id</label>
-                            <input type="number" readonly="readonly" class="form-control border border-success" name="product-id" value="${ product.id }">
-
-                        </div>
+                        List<Category> categoryList = (List<Category>) request.getAttribute("categories"); %>
 
                         <div class="form-group">
                             <label for="product-name">Name</label>
-                            <input type="text" class="form-control border border-success" required name="product-name" value="${ product.name }" placeholder="Enter name">
+                            <input type="text" class="form-control border border-warning" required name="product-name" placeholder="Enter name">
                         </div>
 
                         <div class="form-group">
-                            <label for="product-category">Select category</label>
-                            <select class="form-control border border-success" name="product-category-id" readonly>
-                                <option value="${ product.category.id }">
-                                    ${ product.category.name }
-                                </option>
+                            <label for="product-category-id">Select category</label>
+                            <select class="form-control border border-warning" name="product-category-id" required>
+                                <% if (categoryList != null) { for (Category category : categoryList) { %>
+                                    <option value="${ category.id }">
+                                        ${ category.name }
+                                    </option>
+                                    <% } } %>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label for="product-price">Price</label>
-                            <input type="number" class="form-control border border-success" required name="product-price" value="${ product.price }" min="1" placeholder="Price">
+                            <input type="number" class="form-control border border-warning" required name="product-price" min="1" placeholder="Price">
                         </div>
-
                         <div class="form-group">
                             <label for="product-weight">Weight in grams</label>
-                            <input type="number" class="form-control border border-success" required name="product-weight" value="${ product.weight }" min="1" placeholder="Weight">
+                            <input type="number" class="form-control border border-warning" required name="product-weight" min="1" placeholder="Weight">
                         </div>
-
                         <div class="form-group">
                             <label for="product-quantity">Available quantity</label>
-                            <input type="number" class="form-control border border-success" required name="product-quantity" value="${ product.quantity }" min="1" placeholder="Quantity">
+                            <input type="number" class="form-control border border-warning" required name="product-quantity" min="1" placeholder="Quantity">
                         </div>
                     </div>
 
-                    <div class="col-sm-5">
+                    <div class="col-sm-5"><br>
                         <div class="form-group">
                             <label for="product-description">Description</label>
-                            <textarea class="form-control border border-success" rows="4" name="product-description" placeholder="Product Details" value="${ product.description }"></textarea>
+                            <textarea class="form-control border border-warning" rows="4" name="product-description" placeholder="Product details" value="No product details"></textarea>
                         </div>
 
                         <p>Image</p>
                         <div class="custom-file">
-                            <input type="file" class="form-control border border-warning" required name="product-image-file" id="product-image-file" accept="image/*"> 
+                            <input type="file" class="form-control border border-warning" required name="product-image-file" id="product-image-file" accept="image/*">
                         </div>
 
                         <div class="form-group">
-                            <img src="" id="product-image-preview" hidden height="100px" width="100px" style="margin-top: 20px">
+                            <img src="" hidden id="product-image-preview" height="100px" width="100px" style="margin-top: 20px">
                         </div>
 
                         <div class="form-group">
                             <label for="product-discount">Discount</label>
-                            <input type="input" class="form-control border border-success" required name="product-discount" value="${ product.discount }" min="0" max="1" step="any" placeholder="Discount">
+                            <input type="input" class="form-control border border-warning" required name="product-discount" min="0" step="any" placeholder="Discount">
                         </div>
 
-                        <input type="hidden" name="product-old-image-path" value="${ product.image }">
-                        <input type="submit" value="Update details" class="btn btn-primary">
+                        <input type="hidden" name="product-image-name">
+                        <p></p>
+                        <input type="submit" class="btn btn-primary">
                     </div>
                 </div>
             </form>

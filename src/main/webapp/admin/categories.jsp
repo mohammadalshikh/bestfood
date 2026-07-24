@@ -16,46 +16,29 @@
     </head>
 
     <body class="bg-light">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#"> 
-                    <img src="/images/logo.png" width="auto" height="40" class="d-inline-block align-top" alt=""/>
-                </a>
-
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto"></ul>
-                    <ul class="navbar-nav">
-                        <li class="nav-item active"><a class="nav-link" href="/adminhome">Home</a></li>
-                        <li class="nav-item active"><a class="nav-link" href="/admin">Logout</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <%@ include file="/fragments/admin-navbar.jsp" %>
         <br>
         <div class="container">
 
             <button type="button" style="margin: 20px 0" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                Add Category
+                Add category
             </button>
 
             <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
-                        <form action="sendcategory" method="get">
+                        <form action="/admin/categories" method="post">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle">Add New Category</h5>
+                                <h5 class="modal-title" id="exampleModalLongTitle">Add new category</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div class="modal-body  text-center">
-                                <input type="text" name="categoryname" class="form-control" id="name" required="required" placeholder="Category name">
+
+                            <div class="modal-body text-center">
+                                <input type="text" name="category-name" class="form-control" id="category-name" required="required" placeholder="Category name">
                             </div>
+
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 <input type="submit" value="Save Changes" class="btn btn-primary">
@@ -81,20 +64,19 @@
                     if (categoryList != null) {
                         for (Category category : categoryList) { %>
                             <tr>
-                                <td><%= category.getCategoryId() %></td>
+                                <td><%= category.getId() %></td>
                                 <td><%= category.getName() %></td>
 
                                 <td>
-                                    <form action="categories/delete" method="get">
-                                        <input type="hidden" name="id" value="<%= category.getCategoryId() %>">
+                                    <form action="/admin/categories/${category.id}/delete" method="post">
                                         <input type="submit" value="Delete" class="btn btn-danger">
                                     </form>
                                 </td>
                                 <td>
-                                    <form action="categories/update" method="get">
+                                    <form action="/admin/categories/${category.id}" method="post">
                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModalCenter2" 
-                                        onclick="document.getElementById('categoryname').value = '<%= category.getName() %>'; 
-                                        document.getElementById('categoryid').value =  '<%= category.getCategoryId() %>'; ">Update
+                                        onclick="document.getElementById('category-name').value = '<%= category.getName() %>'; 
+                                        document.getElementById('categoryid').value =  '<%= category.getId() %>'; ">Update
                                         </button>
 
                                         <div class="modal fade" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -103,7 +85,7 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="exampleModalLongTitle">
-                                                            Update Product Details
+                                                            Update product details
                                                         </h5>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
@@ -111,10 +93,10 @@
                                                     </div>
                                                     <div class="modal-body text-center">
                                                         <div class="form-group">
-                                                            <input class="form-control" type="number" readonly="readonly" name="categoryid" id="categoryid" value="0">
+                                                            <input class="form-control" type="number" readonly="readonly" name="category-id" id="category-id" value="0">
                                                         </div>
                                                         <div class="form-group">
-                                                            <input class="form-control" type="text" name="categoryname" id="categoryname" value="categoryname">
+                                                            <input class="form-control" type="text" name="category-name" id="category-name" value="category-name">
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -122,7 +104,7 @@
                                                             Close
                                                         </button>
                                                         <button type="submit" class="btn btn-primary">
-                                                            Update changes
+                                                            Apply changes
                                                         </button>
                                                     </div>
                                                 </div>

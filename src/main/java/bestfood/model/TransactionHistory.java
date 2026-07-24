@@ -2,20 +2,16 @@ package bestfood.model;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "transaction_history")
+@Entity @Table(name = "transaction_history")
 public class TransactionHistory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
+    @ManyToOne @JoinColumn(name = "product_id")
     private Product product;
 
     private int quantity;
@@ -71,4 +67,5 @@ public class TransactionHistory {
     public void setTransactionId(int transactionId) {
         this.transactionId = transactionId;
     }
+    
 }

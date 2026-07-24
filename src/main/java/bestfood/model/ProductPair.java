@@ -2,20 +2,16 @@ package bestfood.model;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "product_pairs")
+@Entity @Table(name = "product_pairs")
 public class ProductPair {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "matrix_id")
+    @ManyToOne @JoinColumn(name = "matrix_id")
     private ProductMatrix matrix;
 
-    @ManyToOne
-    @JoinColumn(name = "paired_product_id")
+    @ManyToOne @JoinColumn(name = "paired_product_id")
     private Product pairedProduct;
 
     private int count;
@@ -23,10 +19,7 @@ public class ProductPair {
     public ProductPair() {
     }
 
-    public ProductPair(
-            ProductMatrix matrix,
-            Product pairedProduct,
-            int count) {
+    public ProductPair(ProductMatrix matrix, Product pairedProduct, int count) {
 
         this.matrix = matrix;
         this.pairedProduct = pairedProduct;
@@ -64,4 +57,5 @@ public class ProductPair {
     public void setCount(int count) {
         this.count = count;
     }
+    
 }

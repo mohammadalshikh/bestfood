@@ -14,26 +14,7 @@
     </head>
 
     <body class="bg-light">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#"> 
-                    <img src="/images/logo.png" width="auto" height="40" class="d-inline-block align-top" alt=""/>
-                </a>
-
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto"></ul>
-                    <ul class="navbar-nav">
-                        <li class="nav-item active"><a class="nav-link" href="/adminhome">Home</a></li>
-                        <li class="nav-item active"><a class="nav-link" href="/admin">Logout</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <%@ include file="/fragments/admin-navbar.jsp" %>
         <br>
         <div class="container-fluid">
             <table class="table">
@@ -42,7 +23,7 @@
                     <th scope="col">Username</th>
                     <th scope="col">Email</th>
                     <th scope="col">Address</th>
-                    <th scope="col">Coupons</th>
+                    <th scope="col">Owned Coupons</th>
                     <th scope="col">Cumulative Total</th>
                 </tr>
                 <tbody>
@@ -50,11 +31,11 @@
                     if (users != null) {
                         for (User user : users) { %>
                             <tr>
-                                <td><%= user.getUserId() %></td>
+                                <td><%= user.getId() %></td>
                                 <td><%= user.getUsername() %></td>
                                 <td><%= user.getEmail() %></td>
-                                <td><%= user.getAddress() !=null ? user.getAddress() : "" %></td>
-                                <td><%= user.getCoupons() %></td>
+                                <td><%= user.getAddress() != null ? user.getAddress() : "" %></td>
+                                <td><%= user.getOwnedCoupons() %></td>
                                 <td><%= String.format("%.2f", user.getCumulativeTotal()) %></td>
                             </tr>
                         <% } } %>

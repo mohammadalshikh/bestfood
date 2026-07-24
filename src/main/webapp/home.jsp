@@ -193,35 +193,7 @@
 
     <body>
         <div class="bg-image-wrapper">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container">
-                    <a class="navbar-brand" href="/index">BestFood</a>
-                    
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/shop">Shop</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/cart">Cart</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profileDisplay">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/">Logout</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            <%@ include file="/fragments/navbar.jsp" %>
             <section class="hero-section">
                 <div class="container">
                     <div class="row">
@@ -261,35 +233,32 @@
                                             <%= product.getName() %> - <%= product.getPrice() %>$
                                         </h4>
         
-                                        <form action="/addtocart" method="get">
-                                            <input hidden type="number" name="productID" value="<%= product.getId() %>">
-        
-                                            <input hidden type="number" name="quantity" value="1">
-        
+                                        <form action="/cart/items" method="post">
+                                            <input hidden type="number" name="product-id" value="<%= product.getId() %>">
+                                            <input hidden type="number" name="product-quantity" value="1">
+                                        
                                             <button style="background-color: #E74B3C; border-color: #E74B3C;" type="submit" class="btn btn-primary btn-lg">
                                                 <i class="fas fa-shopping-cart"></i>
                                                 Add to Cart
                                             </button>
-        
                                         </form>
         
                                         <br>
         
-                                        <form action="/addtocustomcart" method="get">
-                                            <input hidden type="number" name="productID" value="<%= product.getId() %>">
-                                            <input hidden type="number" name="quantity" value="1">
+                                        <form action="/custom-cart/items" method="post">
+                                            <input hidden type="number" name="product-id" value="<%= product.getId() %>">
+                                            <input hidden type="number" name="product-quantity" value="1">
+
                                             <button style="background-color: #027BFF; font-size: 14px;" type="submit" class="btn btn-primary btn-lg">
                                                 <i class="fas fa-shopping-cart"></i>
                                                 Add to Custom Cart
                                             </button>
-        
                                         </form>
                                     </div>
                                 </div>
                             </div>
-        
+
                     <% } } %>
-        
                 </div>
             </div>
         </section>
@@ -357,7 +326,25 @@
                     const productId = event.target.dataset.id;
 
                     if (productId) {
-                        window.location.href = "/addtocart?productID=" + productId + "&quantity=1";
+                        const form = document.createElement("form");
+                        form.method = "POST";
+                        form.action = "/cart/items";
+
+                        const productInput = document.createElement("input");
+                        productInput.type = "hidden";
+                        productInput.name = "product-id";
+                        productInput.value = productId;
+
+                        const quantityInput = document.createElement("input");
+                        quantityInput.type = "hidden";
+                        quantityInput.name = "product-quantity";
+                        quantityInput.value = "1";
+
+                        form.appendChild(productInput);
+                        form.appendChild(quantityInput);
+
+                        document.body.appendChild(form);
+                        form.submit();
                     }
                 }
             });

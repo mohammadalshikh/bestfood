@@ -1,37 +1,30 @@
 package bestfood.model;
 
 import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-@Table(name = "categories")
+@Entity @Table(name = "categories") @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" }) 
 public class Category {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
-    private Integer categoryId;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(nullable = false)
     private String name;
 
-    public Category() {
-    }
+    public Category() {}
 
-    public Category(Integer categoryId, String name) {
-        this.categoryId = categoryId;
+    public Category(Integer id, String name) {
+        this.id = id;
         this.name = name;
     }
 
-    // Getters and Setters
-    public Integer getCategoryId() {
-        return categoryId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -41,4 +34,5 @@ public class Category {
     public void setName(String name) {
         this.name = name;
     }
+    
 }

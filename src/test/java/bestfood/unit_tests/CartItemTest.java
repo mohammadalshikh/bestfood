@@ -18,7 +18,7 @@ public class CartItemTest {
         assertEquals(productName, cartItem.getProductName());
         assertEquals(quantity, cartItem.getQuantity());
         assertEquals(totalPrice, cartItem.getTotalPrice(), 0.001); // Using delta to handle float comparison
-        assertEquals(productID, cartItem.getProductID());
+        assertEquals(productID, cartItem.getProductId());
     }
 
     @Test
@@ -33,6 +33,6 @@ public class CartItemTest {
         assertEquals(productName, cartItem.getProductName());
         assertEquals(quantity, cartItem.getQuantity());
         assertEquals(totalPrice, cartItem.getTotalPrice(), 0.001); // Using delta to handle float comparison
-        assertEquals(productID, cartItem.getProductID());
+        assertEquals(productID, cartItem.getProductId());
     }
 }

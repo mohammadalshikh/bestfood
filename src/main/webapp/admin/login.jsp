@@ -39,7 +39,7 @@
                     <p class="error-message">${message}</p>
                     <input type="submit" value="Log in" class="btn btn-primary btn-block">
                     <br>
-                    <span>User login page from <a class="linkControl" href="/">here</a></span>
+                    <span>User login page from <a class="linkControl" href="/login">here</a></span>
             </div>
 
         </div>

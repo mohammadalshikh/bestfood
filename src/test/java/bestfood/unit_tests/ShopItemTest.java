@@ -19,7 +19,7 @@ public class ShopItemTest {
         assertEquals(image, shopItem.getImage());
         assertEquals(productName, shopItem.getProductName());
         assertEquals(price, shopItem.getPrice(), 0.1);
-        assertEquals(productID, shopItem.getProductID());
+        assertEquals(productID, shopItem.getProductId());
         assertEquals(suggestedItem, shopItem.getSuggestedItem());
     }
 
@@ -36,7 +36,7 @@ public class ShopItemTest {
         assertEquals(image, shopItem.getImage());
         assertEquals(productName, shopItem.getProductName());
         assertEquals(price, shopItem.getPrice(), 0.1);
-        assertEquals(productID, shopItem.getProductID());
+        assertEquals(productID, shopItem.getProductId());
         assertEquals(suggestedItem, shopItem.getSuggestedItem());
     }
 }

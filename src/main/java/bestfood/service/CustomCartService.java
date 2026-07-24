@@ -1,136 +1,137 @@
 package bestfood.service;
 
-import bestfood.model.CustomCart;
+import bestfood.model.CustomCartItem;
 import bestfood.model.Product;
 import bestfood.model.User;
-
-import bestfood.repo.CustomCartRepo;
-import bestfood.repo.ProductRepo;
-import bestfood.repo.UserRepo;
-
+import bestfood.repo.CustomCartItemRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
 public class CustomCartService {
 
-    private final CustomCartRepo customCartRepo;
-    private final UserRepo userRepo;
-    private final ProductRepo productRepo;
+    private final CustomCartItemRepo customCartItemRepo;
     private final CartService cartService;
+    private final ProductService productService;
+    private final UserService userService;
 
     public CustomCartService(
-            CustomCartRepo customCartRepo,
-            UserRepo userRepo,
-            ProductRepo productRepo,
-            CartService cartService) {
+        CustomCartItemRepo customCartItemRepo,
+        CartService cartService,
+        ProductService productService, 
+        UserService userService) {
 
-        this.customCartRepo = customCartRepo;
-        this.userRepo = userRepo;
-        this.productRepo = productRepo;
+        this.customCartItemRepo = customCartItemRepo;
         this.cartService = cartService;
+        this.productService = productService;
+        this.userService = userService;
     }
 
-    public List<CustomCart> getAllCustomCarts() {
-        return customCartRepo.findAll();
+    public List<CustomCartItem> getAllCustomCartItems() {
+
+        return customCartItemRepo.findAll();
     }
 
-    public CustomCart getCustomCartById(Integer id) {
-        return customCartRepo.findById(id)
-                .orElse(null);
+    public List<CustomCartItem> getCustomCartItemsByUserId(int userId) {
+
+        return customCartItemRepo.findByUserId(userId);
     }
 
-    public List<CustomCart> getCustomCartByUserId(int userId) {
+    public CustomCartItem getCustomCartItemById(Integer id) {
 
-        return customCartRepo.findByUserUserId(userId);
+        return customCartItemRepo.findById(id).orElse(null);
     }
 
-    public CustomCart getCustomCartItem(
-            int userId,
-            int productId) {
+    public CustomCartItem getCustomCartItemByUserIdAndProductId(int userId, int productId) {
 
-        return customCartRepo
-                .findByUserUserIdAndProductId(
-                        userId,
-                        productId);
+        return customCartItemRepo.findByUserIdAndProductId(userId, productId);
     }
 
-    public CustomCart addItemToCustomCart(
-            int userId,
-            int productId,
-            int quantity) {
+    public CustomCartItem addCustomCartItem(int userId, int productId, int quantity) {
 
-        CustomCart existing = getCustomCartItem(userId, productId);
+        CustomCartItem existing = getCustomCartItemByUserIdAndProductId(userId, productId);
 
         if (existing != null) {
 
-            existing.setQuantity(
-                    existing.getQuantity() + quantity);
+            existing.setQuantity(existing.getQuantity() + quantity);
 
-            return customCartRepo.save(existing);
+            return customCartItemRepo.save(existing);
         }
 
-        User user = userRepo.findById(userId)
-                .orElseThrow();
+        User user = userService.getUserById(userId);
 
-        Product product = productRepo.findById(productId)
-                .orElseThrow();
+        Product product = productService.getProductById(productId);
 
-        CustomCart cart = new CustomCart();
+        CustomCartItem customCartItem = new CustomCartItem();
 
-        cart.setUser(user);
-        cart.setProduct(product);
-        cart.setQuantity(quantity);
+        customCartItem.setUser(user);
+        customCartItem.setProduct(product);
+        customCartItem.setQuantity(quantity);
 
-        return customCartRepo.save(cart);
+        return customCartItemRepo.save(customCartItem);
     }
 
-    public CustomCart updateCustomCartItemQuantity(
-            int userId,
-            int productId,
-            int quantity) {
+    public CustomCartItem updateCustomCartItemQuantity(int userId, int productId, int quantity) {
 
-        CustomCart cart = getCustomCartItem(
-                userId,
-                productId);
+        CustomCartItem customCartItem = getCustomCartItemByUserIdAndProductId(userId, productId);
 
-        if (cart == null) {
+        if (customCartItem == null) {
             return null;
         }
 
-        cart.setQuantity(quantity);
+        if (quantity >= 0) {
+            customCartItem.setQuantity(quantity);
+        }
 
-        return customCartRepo.save(cart);
+        return customCartItemRepo.save(customCartItem);
     }
 
     @Transactional
     public void removeCustomCartItem(int userId, int productId) {
-        customCartRepo.deleteByUserUserIdAndProductId(userId, productId);
+
+        customCartItemRepo.deleteByUserIdAndProductId(userId, productId);
     }
-    
+
     @Transactional
-    public void clearCustomCart(Integer id) {
-        customCartRepo.deleteById(id);
+    public void removeCustomCartItems(int userId) {
+
+        customCartItemRepo.deleteByUserId(userId);
     }
-    
-    public void moveCustomCartToCart(int userId) {
 
-        List<CustomCart> items = getCustomCartByUserId(userId);
+    public CustomCartItem saveCustomCartItem(CustomCartItem customCartItem) {
 
-        for (CustomCart item : items) {
+        return customCartItemRepo.save(customCartItem);
+    }
 
-            cartService.addItemToCart(
-                    userId,
-                    item.getProduct().getId(),
-                    item.getQuantity());
+    public float getTotalNoTaxNoCoupons(int userId) {
+
+        float customCartTotal = 0;
+
+        List<CustomCartItem> customCartItems = getCustomCartItemsByUserId(userId);
+
+        for (CustomCartItem customCartItem : customCartItems) {
+
+            if (customCartItem.getProduct() != null) {
+
+                customCartTotal += productService.getProductPrice(
+                    customCartItem.getProduct().getId(),
+                    customCartItem.getQuantity()
+                );
+            }
+        }
+        return customCartTotal;
+    }
+
+    @Transactional
+    public void addCustomCartToCart(int userId) {
+
+        List<CustomCartItem> customCartItems = getCustomCartItemsByUserId(userId);
+
+        for (CustomCartItem customCartItem : customCartItems) {
+
+            cartService.addCartItem(userId, customCartItem.getProduct().getId(), customCartItem.getQuantity());
         }
     }
-
-    public CustomCart saveCustomCart(CustomCart customCart) {
-        return customCartRepo.save(customCart);
-    }
-
     
 }

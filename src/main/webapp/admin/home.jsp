@@ -14,31 +14,12 @@
     </head>
 
     <body class="bg-dark">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                
-                <a class="navbar-brand" href="#"> 
-                    <img src="/images/logo.png" width="auto" height="40" class="d-inline-block align-top" alt=""/>
-                </a>
-
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto"></ul>
-                    <ul class="navbar-nav">
-                        <li class="nav-item active"><a class="nav-link" href="/adminhome">Home</a></li>
-                        <li class="nav-item active"><a class="nav-link" href="/admin">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <%@ include file="/fragments/admin-navbar.jsp" %>
 
         <div class="jumbotron text-center">
             <h1 class="display-4">Welcome Back, Admin</h1>
             <hr>
-            <p>Manage your data from this Admin Panel</p>
+            <p>Manage your data from this admin panel</p>
         </div>
         
         <br>
@@ -69,10 +50,10 @@
                 <div class="col-sm-3 pt-4">
                     <div class="card" style="background-color: white;">
                         <div class="card-body text-center">
-                            <h4 class="card-title">Customers</h4>
+                            <h4 class="card-title">Users</h4>
                             <p>---------------------------------------------</p>
-                            <p class="card-text">Manage all the customer here.</p>
-                            <a href="/admin/customers" class="card-link btn btn-primary">Manage</a>
+                            <p class="card-text">Manage all the users here.</p>
+                            <a href="/admin/users" class="card-link btn btn-primary">Manage</a>
                         </div>
                     </div>
                 </div>

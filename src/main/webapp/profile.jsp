@@ -81,36 +81,7 @@
 
     <body>
         <div class="bg-image-wrapper">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container">
-                    <a class="navbar-brand" href="/index">BestFood</a>
-
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/shop">Shop</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/cart">Cart</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profileDisplay">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/">Logout</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </nav>
+            <%@ include file="/fragments/navbar.jsp" %>
         </div>
         <br>
 
@@ -118,46 +89,48 @@
             <div class="col-sm-6 mx-auto">
                 <h3 style="margin-top: 10px">User Profile</h3>
                 <br>
-                <form action="updateuser" method="post">
+                <form action="/profile/update" method="post">
                     <div class="form-group">
                         <label for="email">Email address</label>
-                        <input type="email" class="form-control form-control-lg" required minlength="6" placeholder="Email*" value="${email}" required name="email" id="email" aria-describedby="emailHelp">
+                        <input type="email" class="form-control form-control-lg" required minlength="6" placeholder="Email*"
+                            value="${ email }" required name="email" id="email" aria-describedby="emailHelp">
                     </div>
-
+                
                     <div class="form-group">
-                        <label for="firstName">Username</label>
-                        <input type="hidden" name="userid" value="${userid}">
-                        <input type="text" name="username" id="firstName" required placeholder="Your Username*" value="${username}" required class="form-control form-control-lg">
+                        <label for="username">Username</label>
+                        <input type="text" name="username" id="username" required placeholder="Username*" value="${ username }" required class="form-control form-control-lg">
                     </div>
-
+                
                     <div class="form-group">
                         <label for="password">Password</label>
-
-                        <input type="password" class="form-control form-control-lg" required placeholder="Password*" 
-                        value="${password }" required name="password" id="password"
-                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?><]).{8,}"
-                        title="Must contain: at least one number, one uppercase letter, one lowercase letter, one special character, and 8 or more characters" required>
-
+                
+                        <input type="password" class="form-control form-control-lg" required placeholder="Password*"
+                            value="${ password }" required name="password" id="password"
+                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?><]).{8,}"
+                            title="Must contain: at least one number, one uppercase letter, one lowercase letter, one special character, and 8 or more characters"
+                            required>
+                
                         <input type="checkbox" onclick="showPassword()"> Show password
                     </div>
-
+                
                     <div class="form-group">
                         <label for="address">Address</label>
-                        <textarea class="form-control form-control-lg" rows="3" placeholder="Enter Your Address" name="address">${address}</textarea>
+                        <textarea class="form-control form-control-lg" rows="3" placeholder="Enter Your Address"
+                            name="address">${ address }</textarea>
                     </div>
-
+                
                     <div class="form-group">
-                        <label>Coupons Owned</label>
-                        <input class="form-control form-control-lg" readonly="true" value="${userCoupons}">
+                        <label>Coupons owned</label>
+                        <input class="form-control form-control-lg" readonly="true" value="${ownedCoupons}">
                     </div>
-
+                
                     <div class="form-group">
                         <label>Minimum purchase for next coupon</label>
                         <input class="form-control form-control-lg" readonly="true" value="${100-cumulativeTotal}">
                     </div>
-
-                    <input type="submit" value="Update Profile" class="btn btn-primary btn-block"><br>
-
+                
+                    <input type="submit" value="Update profile" class="btn btn-primary btn-block"><br>
+                
                 </form>
             </div>
         </div>

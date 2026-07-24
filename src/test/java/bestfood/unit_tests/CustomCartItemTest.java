@@ -17,8 +17,8 @@ public class CustomCartItemTest {
 
         assertEquals(productName, customCartItem.getProductName());
         assertEquals(quantity, customCartItem.getQuantity());
-        assertEquals(totalPrice, customCartItem.getTotalPrice(), 0.001);
-        assertEquals(productID, customCartItem.getProductID());
+        assertEquals(totalPrice, customCartItem.getTotalNoTaxNoCoupons(), 0.001);
+        assertEquals(productID, customCartItem.getProductId());
     }
 
     @Test
@@ -32,7 +32,7 @@ public class CustomCartItemTest {
 
         assertEquals(productName, customCartItem.getProductName());
         assertEquals(quantity, customCartItem.getQuantity());
-        assertEquals(totalPrice, customCartItem.getTotalPrice(), 0.001);
-        assertEquals(productID, customCartItem.getProductID());
+        assertEquals(totalPrice, customCartItem.getTotalNoTaxNoCoupons(), 0.001);
+        assertEquals(productID, customCartItem.getProductId());
     }
 }

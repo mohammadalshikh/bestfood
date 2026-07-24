@@ -110,36 +110,7 @@
 
     <body>
         <div class="bg-image-wrapper">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container">
-                    <a class="navbar-brand" href="/index">BestFood</a>
-
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/shop">Shop</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/cart">Cart</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profileDisplay">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/">Logout</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </nav>
+            <%@ include file="/fragments/navbar.jsp" %>
         </div>
 
         <% ArrayList<ShopItem> shopItems = (ArrayList<ShopItem>) request.getAttribute("shopItems"); %>
@@ -154,17 +125,17 @@
                                     <br>
                                     <h4><%= item.getProductName() %> - <%= item.getPrice() %>$</h4>
                                     <p>(Buy with <%= item.getSuggestedItem() %>)</p>
-                                    <form action="/addtocart" method="get" id="<%= item.getProductID() %>|ac">
-                                        <input hidden type="number" name="productID" value="<%= item.getProductID() %>">
-                                        <input hidden type="number" name="quantity" value="1">
+                                    <form action="/cart/items" method="post" id="<%= item.getProductId() %>|ac">
+                                        <input hidden type="number" name="product-id" value="<%= item.getProductId() %>">
+                                        <input hidden type="number" name="product-quantity" value="1">
                                         <button style="background-color: #E74B3C; border-color: #E74B3C;" type="submit" class="btn btn-primary btn-lg">
                                             <i class="fas fa-shopping-cart"></i> Add to Cart
                                         </button>
                                     </form>
                                     <br>
-                                    <form action="/addtocustomcart" method="get" id="<%= item.getProductID() %>|acc">
-                                        <input hidden type="number" name="productID" value="<%= item.getProductID() %>">
-                                        <input hidden type="number" name="quantity" value="1">
+                                    <form action="/custom-cart/items" method="post" id="<%= item.getProductId() %>|acc">
+                                        <input hidden type="number" name="product-id" value="<%= item.getProductId() %>">
+                                        <input hidden type="number" name="product-quantity" value="1">
                                         <button style="background-color: #027BFF; font-size: 14px;" type="submit" class="btn btn-primary btn-lg">
                                             <i class="fas fa-shopping-cart"></i> Add to Custom Cart
                                         </button>

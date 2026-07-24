@@ -3,7 +3,6 @@ package bestfood.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -31,53 +30,32 @@ public class SupabaseStorageService {
 
         String fileName = UUID.randomUUID() + "_" + originalName;
 
-        String uploadUrl = supabaseUrl
-                + "/storage/v1/object/"
-                + bucket
-                + "/"
-                + fileName;
+        String uploadUrl = supabaseUrl + "/storage/v1/object/" + bucket + "/" + fileName;
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uploadUrl))
-                .header("Authorization",
-                        "Bearer " + supabaseKey)
-                .header("apikey",
-                        supabaseKey)
-                .header("Content-Type",
-                        file.getContentType())
-                .PUT(HttpRequest.BodyPublishers.ofByteArray(
-                        file.getBytes()))
-                .build();
+            .uri(URI.create(uploadUrl))
+            .header("Authorization", "Bearer " + supabaseKey).header("apikey", supabaseKey)
+            .header("Content-Type", file.getContentType())
+            .PUT(HttpRequest.BodyPublishers.ofByteArray(file.getBytes())).build();
 
         try {
 
-            HttpResponse<String> response = client.send(
-                    request,
-                    HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() >= 200
-                    && response.statusCode() < 300) {
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
 
-                return supabaseUrl
-                        + "/storage/v1/object/public/"
-                        + bucket
-                        + "/"
-                        + fileName;
-
+                return supabaseUrl + "/storage/v1/object/public/" + bucket + "/" + fileName;
+                
             } else {
-
-                throw new RuntimeException(
-                        "Supabase upload failed: "
-                                + response.body());
+                throw new RuntimeException("Supabase upload failed: " + response.body());
             }
 
         } catch (InterruptedException e) {
 
             Thread.currentThread().interrupt();
 
-            throw new RuntimeException(
-                    "Upload interrupted",
-                    e);
+            throw new RuntimeException("Upload interrupted", e);
         }
     }
+
 }

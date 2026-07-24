@@ -1,116 +1,106 @@
 package bestfood.service;
 
-import bestfood.model.Cart;
 import bestfood.model.Product;
 import bestfood.model.User;
-import bestfood.repo.CartRepo;
-import bestfood.repo.ProductRepo;
-import bestfood.repo.UserRepo;
-
+import bestfood.model.CartItem;
+import bestfood.repo.CartItemRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
 public class CartService {
 
-    private final CartRepo cartRepo;
-    private final UserRepo userRepo;
-    private final ProductRepo productRepo;
+    private final CartItemRepo cartItemRepo;
+    private final ProductService productService;
+    private final UserService userService;
 
-    public CartService(
-            CartRepo cartRepo,
-            UserRepo userRepo,
-            ProductRepo productRepo) {
+    public CartService(CartItemRepo cartItemRepo, ProductService productService, UserService userService) {
 
-        this.cartRepo = cartRepo;
-        this.userRepo = userRepo;
-        this.productRepo = productRepo;
+        this.cartItemRepo = cartItemRepo;
+        this.productService = productService;
+        this.userService = userService;
     }
 
-    public List<Cart> getAllCarts() {
-        return cartRepo.findAll();
+    public List<CartItem> getAllCartItems() {
+        return cartItemRepo.findAll();
     }
 
-    public Cart getCartById(Integer id) {
-        return cartRepo.findById(id)
-                .orElse(null);
+    public List<CartItem> getCartItemsByUserId(int userId) {
+        return cartItemRepo.findByUserId(userId);
     }
 
-    public List<Cart> getCartByUserId(int userId) {
-        return cartRepo.findByUserUserId(userId);
+    public CartItem getCartItemById(Integer id) {
+        return cartItemRepo.findById(id).orElse(null);
     }
 
-    public Cart getCartItem(int userId, int productId) {
-        return cartRepo.findByUserUserIdAndProductId(
-                userId,
-                productId);
+    public CartItem getCartItemByUserIdAndProductId(int userId, int productId) {
+        return cartItemRepo.findByUserIdAndProductId(userId, productId);
     }
 
-    public Cart addItemToCart(
-            int userId,
-            int productId,
-            int quantity) {
+    public CartItem addCartItem(int userId, int productId, int quantity) {
 
-        Cart existing = getCartItem(userId, productId);
+        CartItem existing = getCartItemByUserIdAndProductId(userId, productId);
 
         if (existing != null) {
-
-            existing.setQuantity(
-                    existing.getQuantity() + quantity);
-
-            return cartRepo.save(existing);
+            existing.setQuantity(existing.getQuantity() + quantity);
+            return cartItemRepo.save(existing);
         }
 
-        User user = userRepo.findById(userId)
-                .orElseThrow();
+        User user = userService.getUserById(userId);
+        Product product = productService.getProductById(productId);
+        CartItem cartItem = new CartItem();
 
-        Product product = productRepo.findById(productId)
-                .orElseThrow();
+        cartItem.setUser(user);
+        cartItem.setProduct(product);
+        cartItem.setQuantity(quantity);
 
-        Cart cart = new Cart();
-
-        cart.setUser(user);
-        cart.setProduct(product);
-        cart.setQuantity(quantity);
-
-        return cartRepo.save(cart);
+        return cartItemRepo.save(cartItem);
     }
 
-    public Cart updateCartItemQuantity(
-            int userId,
-            int productId,
-            int quantity) {
+    public CartItem updateCartItemQuantity(int userId, int productId, int quantity) {
 
-        Cart cart = getCartItem(userId, productId);
+        CartItem cartItem = getCartItemByUserIdAndProductId(userId, productId);
 
-        if (cart == null) {
+        if (cartItem == null) {
             return null;
         }
 
-        cart.setQuantity(quantity);
-
-        return cartRepo.save(cart);
+        if (quantity >= 0) {
+            cartItem.setQuantity(quantity);
+        }
+        return cartItemRepo.save(cartItem);
     }
 
     @Transactional
-    public void removeCartItem(
-            int userId,
-            int productId) {
+    public void removeCartItem(int userId, int productId) {
 
-        cartRepo.deleteByUserUserIdAndProductId(
-                userId,
-                productId);
+        cartItemRepo.deleteByUserIdAndProductId(userId, productId);
     }
-    
+
     @Transactional
-    public void clearCart(Integer id) {
-        cartRepo.deleteById(id);
+    public void removeCartItems(int userId) {
+        cartItemRepo.deleteByUserId(userId);
     }
-    
-    public Cart saveCart(Cart cart) {
-        return cartRepo.save(cart);
+
+    public float getTotalNoTaxNoCoupons(int userId) {
+
+        float cartTotalNoTaxNoCoupons = 0;
+
+        List<CartItem> cartItems = getCartItemsByUserId(userId);
+
+        for (CartItem cartItem : cartItems) {
+
+            if (cartItem.getProduct() != null && cartItem.getProduct().getId() != 0) {
+
+                cartTotalNoTaxNoCoupons += productService
+                    .getProductPrice(
+                        cartItem.getProduct().getId(),
+                        cartItem.getQuantity());
+            }
+        }
+        
+        return cartTotalNoTaxNoCoupons;
     }
 
 }

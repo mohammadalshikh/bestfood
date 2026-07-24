@@ -2,14 +2,11 @@ package bestfood.model;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "users")
+@Entity @Table(name = "users")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Integer userId;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -23,35 +20,33 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    private int coupons;
+    private int ownedCoupons;
 
     private float cumulativeTotal;
 
     public User() {
         this.role = "ROLE_USER";
-        this.coupons = 0;
+        this.ownedCoupons = 0;
         this.cumulativeTotal = 0f;
     }
 
     public User(Integer userId, String username, String password, String role, String address, String email) {
-        this.userId = userId;
+        this.id = userId;
         this.username = username;
         this.password = password;
         this.role = role;
         this.address = address;
         this.email = email;
-        this.coupons = 0;
+        this.ownedCoupons = 0;
         this.cumulativeTotal = 0f;
     }
 
-    // Getters and Setters
-
-    public Integer getUserId() {
-        return userId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -94,12 +89,12 @@ public class User {
         this.email = email;
     }
 
-    public int getCoupons() {
-        return coupons;
+    public int getOwnedCoupons() {
+        return ownedCoupons;
     }
 
-    public void setCoupons(int coupons) {
-        this.coupons = coupons;
+    public void setOwnedCoupons(int couponsCount) {
+        this.ownedCoupons = couponsCount;
     }
 
     public float getCumulativeTotal() {
@@ -109,4 +104,5 @@ public class User {
     public void setCumulativeTotal(float cumulativeTotal) {
         this.cumulativeTotal = cumulativeTotal;
     }
+    
 }

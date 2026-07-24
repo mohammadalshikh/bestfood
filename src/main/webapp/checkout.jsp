@@ -104,79 +104,49 @@
 
     <body>
         <div class="bg-image-wrapper">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container">
-                    <a class="navbar-brand" href="/index">
-                        BestFood
-                    </a>
-
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/shop">Shop</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/cart">Cart</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profileDisplay">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/">Logout</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            <%@ include file="/fragments/navbar.jsp" %>
         </div>
         <br> <br>
 
         <div class="container d-flex justify-content-center">
             <div class="left-content">
-                <H1 style="white-space: nowrap">Order Summary</H1>
+                <H1 style="white-space: nowrap">Order summary</H1>
                 <br>
-                <H4>Items: $${total}</H4>
+                <H4>Items: $${totalNoTaxNoCoupons}</H4>
                 <br>
-                <H4 style="white-space: nowrap">Shipping & Handling: FREE</H4>
+                <H4 style="white-space: nowrap">Shipping & handling: FREE</H4>
                 <br>
-                <H4>Total after tax: $${totalAfterTexesNoCoup}</H4>
+                <H4>Total after tax: $${totalAfterTaxNoCoupons}</H4>
                 <br>
                 <H4>-------------------</H4>
                 <br> <br>
-                <H4>Order Total: $${orderTotal}</H4>
+                <H4>Order total: $${totalFinal}</H4>
                 <br>
-                <form action="/applyCoupon" method="post">
+                <form action="/checkout/coupons" method="post">
                     <label>Apply coupons</label>
-                    <input type="number" class="form-control" name="apply" placeholder="${couponsApplied}" max="${couponsForUser}" min="0">
+                    <input type="number" class="form-control" name="apply" placeholder="${couponsApplied}" max="${couponsOwned}" min="0">
                     <br>
                     
                     <button type="submit" class="btn btn-primary">Apply</button>
                 </form>
             </div>
             <div class="form-container">
-                <form id="payment-form" action="/buyCart" method="post">
+                <form id="payment-form" action="/checkout" method="post">
                     <div class="form-group">
-                        <label for="first-name">First Name</label>
+                        <label for="first-name">First name</label>
                         <input type="text" class="form-control" id="first-name" value="Khaled" required>
                     </div>
                     <div class="form-group">
-                        <label for="last-name">Last Name</label>
+                        <label for="last-name">Last name</label>
                         <input type="text" class="form-control" id="last-name" value="Jobabo" required>
                     </div>
                     <div class="form-group">
-                        <label for="card-number">Card Number</label>
-                        <input type="text" class="form-control" id="card-number" value="5258976001726101" required>
+                        <label for="card-number">Card number</label>
+                        <input type="text" class="form-control" id="card-number" value="5258 9760 0172 6101" required>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="expiry-month">Card Expiry Date (MM/YY)</label>
+                            <label for="expiry-month">Card expiry date (MM/YY)</label>
                             <input type="text" class="form-control" id="expiry-month" value="06/25" required>
                         </div>
                         <div class="form-group">
@@ -185,8 +155,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="street-address">Street Address</label>
-                        <input type="text" class="form-control" id="street-address" value="40 Guy St" required>
+                        <label for="address">Address</label>
+                        <input type="text" class="form-control" id="address" value="40 Guy St" required>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
@@ -194,16 +164,16 @@
                             <input type="text" class="form-control" id="city" value="Montreal" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="postal-code">Postal Code</label>
+                            <label for="postal-code">Postal code</label>
                             <input type="text" class="form-control" id="postal-code" value="H4N1G2" required
                                 maxlength="6">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" class="form-control" id="email" value="jobaboking@gmail.com" required>
+                        <label for="email">Email address</label>
+                        <input type="email" class="form-control" id="email" value="bestfood354@gmail.com" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit Payment</button>
+                    <button type="submit" class="btn btn-primary">Submit payment</button>
                 </form>
             </div>
         </div>

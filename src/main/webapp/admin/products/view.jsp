@@ -34,31 +34,10 @@
     </head>
 
     <body class="bg-light">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-
-                <a class="navbar-brand" href="#"> 
-                    <img src="/images/logo.png" width="auto" height="40" class="d-inline-block align-top" alt=""/>
-                </a>
-
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto"></ul>
-                    <ul class="navbar-nav">
-                        <li class="nav-item active"><a class="nav-link" href="/adminhome">Home</a></li>
-                        <li class="nav-item active"><a class="nav-link" href="/admin">Logout</a>
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <%@ include file="/fragments/admin-navbar.jsp" %>
         <br>
         <div class="d-flex justify-content-end mb-3">
-            <a href="/admin/products/add" id="addProduct" class="btn btn-action">Add product</a>
+            <a href="/admin/products/create" id="create-product" class="btn btn-action">Add product</a>
         </div>
         <div class="container-fluid">
             <table class="table">
@@ -84,7 +63,7 @@
                     Map<Integer, String> categoryMap = new HashMap<>();
                     if (categoryList != null) {
                         for (Category cat : categoryList) {
-                            categoryMap.put(cat.getCategoryId(), cat.getName());
+                            categoryMap.put(cat.getId(), cat.getName());
                         }
                     }
 
@@ -93,7 +72,7 @@
                             <tr>
                                 <td><%= product.getId() %></td>
                                 <td><%= product.getName() %></td>
-                                <td><%= categoryMap.getOrDefault(product.getCategoryId(), "") %></td>
+                                <td><%= categoryMap.getOrDefault(product.getCategory().getId(), "") %></td>
                                 <td><img src="<%= product.getImage() %>" height="100px" width="100px"></td>
                                 <td><%= product.getQuantity() %></td>
                                 <td>$<%= String.format("%.2f", product.getPrice()) %></td>
@@ -111,34 +90,31 @@
                                     } %>
                                 </td>
                                 <td>
-                                    <form action="/suggestItem" method="get">
-                                        <label for="suggestedItem"></label>
-                                        <select id="suggestedItem" name="suggestedID">
+                                    <form action="/admin/products/${product.id}/suggest" method="post">
+                                        <label for="suggested-product-id"></label>
+                                        <select id="suggested-product-id" name="suggested-product-id">
                                             <% int currentItemId = product.getId(); 
                                             int currentSuggestedItem = product.getSuggestedItem();
                                             for (Product p : productList) { 
-                                                if (p.getId() != 0 && p.getId() !=currentItemId) { %>
+                                                if (p.getId() != 0 && p.getId() != currentItemId) { %>
                                                     <option value="<%= p.getId() %>"
-                                                        <%=(p.getId()==currentSuggestedItem) ? "selected" : "" %>>
+                                                        <%= (p.getId() == currentSuggestedItem) ? "selected" : "" %>>
                                                         <%= p.getName() %>
                                                     </option>
                                             <% }} %>
 
                                         </select>
 
-                                        <input type="hidden" name="productID" value="<%= product.getId() %>">
                                         <input type="submit">
                                     </form>
                                 </td>
                                 <td>
-                                    <form action="products/delete" method="get">
-                                        <input type="hidden" name="id" value="<%= product.getId() %>">
+                                    <form action="/admin/products/${product.id}/delete" method="post">
                                         <input id="delete" type="submit" value="Delete" class="btn btn-danger">
                                     </form>
                                 </td>
                                 <td>
-                                    <form action="products/update" method="get">
-                                        <input type="hidden" name="pid" value="<%= product.getId() %>">
+                                    <form action="/admin/products/${product.id}/update" method="get">
                                         <input type="submit" value="Update" class="btn btn-warning">
                                     </form>
                                 </td>
