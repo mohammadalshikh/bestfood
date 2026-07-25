@@ -71,16 +71,19 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    public void updateUser(int userId, String username, String email, String password, String address) {
+    public void updateUser(int userId, String username, String email, String address) {
 
         User user = getUserById(userId);
 
         if (user != null) {
 
-            user.setUsername(username);
-            user.setEmail(email);
-            user.setPassword(passwordEncoder.encode(password));
             user.setAddress(address);
+            if (!isUsernameExists(username)) {
+                user.setUsername(username);
+            }
+            if (!isEmailExists(email)) {
+                user.setEmail(email);
+            }
 
             userRepo.save(user);
         }

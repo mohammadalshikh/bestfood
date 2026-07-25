@@ -36,10 +36,10 @@
                         <input type="password" class="form-control form-control-lg border border-danger" placeholder="Password" required name="password" id="password">
                     </div>
 
-                    <p class="error-message">${message}</p>
+                    <p class="error-message">${errorMessage}</p>
                     <input type="submit" value="Log in" class="btn btn-primary btn-block">
                     <br>
-                    <span>User login page from <a class="linkControl" href="/login">here</a></span>
+                    <span>User login page from <a class="link-control" href="/login">here</a></span>
             </div>
 
         </div>

@@ -47,7 +47,7 @@
                 white-space: nowrap;
             }
 
-            .login-container {
+            .login-div {
                 max-width: 400px;
                 background-color: rgba(255, 255, 255, 0.8);
                 padding: 30px;
@@ -55,20 +55,20 @@
                 position: relative;
             }
 
-            .login-container h2 {
+            .login-div h2 {
                 text-align: center;
                 margin-bottom: 30px;
             }
 
-            .login-container form .form-group {
+            .login-div form .form-group {
                 margin-bottom: 20px;
             }
 
-            .login-container form .form-control {
+            .login-div form .form-control {
                 border-radius: 5px;
             }
 
-            .login-container form .btn-login {
+            .login-div form .btn-login {
                 background-color: #E74B3C;
                 color: #fff;
                 border: none;
@@ -76,7 +76,7 @@
                 width: 100%;
             }
 
-            .login-container form .btn-login:hover {
+            .login-div form .btn-login:hover {
                 background-color: #D91E18;
             }
 
@@ -100,7 +100,7 @@
                 margin-top: 10px;
             }
 
-            .registration-form {
+            .register-form {
                 display: block;
                 margin-top: 20px;
             }
@@ -125,11 +125,11 @@
                 margin-top: -20px;
             }
 
-            .linkControl {
+            .link-control {
                 color: #e74c3c;
             }
 
-            .linkControl:hover {
+            .link-control:hover {
                 color: #e74c3c;
             }
 
@@ -145,8 +145,8 @@
                 font-size: 17px;
             }
 
-            #submitBtn[disabled],
-            #submitBtn[disabled]:hover {
+            #register-submit-button[disabled],
+            #register-submit-button[disabled]:hover {
                 background-color: #E74B3C;
                 color: #fff;
                 cursor: default;
@@ -163,7 +163,7 @@
             <div class="website-name-wrapper">
                 <h1 class="website-name">BestFood</h1>
             </div>
-            <div class="login-container" id="loginContainer">
+            <div class="login-div" id="login-div">
                 <h2>User Login</h2>
                 <form action="/login" method="post">
 
@@ -175,47 +175,47 @@
                         <input type="password" name="login-password" id="login-password" placeholder="Password" required class="form-control form-control-lg">
                     </div>
 
-                    <p class="error-message">${failMessage}</p>
+                    <p class="error-message">${errorMessage}</p>
                     <button type="submit" class="btn btn-login">Log in</button>
                     <br><br>
 
-                    <span>Don't have an account? <a class="linkControl" href="#" data-toggle="modal" data-target="#registrationModal">Register here</a></span>
+                    <span>Don't have an account? <a class="link-control" href="#" data-toggle="modal" data-target="#register-modal">Register</a></span>
                     <br>
 
-                    <span>Admin login page from <a class="linkControl" href="/admin/login">here</a></span>
+                    <span>Admin login page from <a class="link-control" href="/admin/login">here</a></span>
                 </form>
             </div>
 
 
-            <div class="modal fade" id="registrationModal" tabindex="-1" role="dialog" aria-labelledby="registrationModalLabel" aria-hidden="true">
+            <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="register-modal-label" aria-hidden="true">
 
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
 
                         <div class="modal-header">
-                            <h2 class="modal-title" id="registrationModalLabel">Create an account</h2>
+                            <h2 class="modal-title" id="register-modal-label">Create an account</h2>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
 
                         <div class="modal-body">
-                            <form action="/register" method="post" class="registration-form" id="registrationForm">
+                            <form action="/register" method="post" class="register-form" id="register-form">
                                 <div class="form-group">
                                     <label for="register-email" style="display: block; width: 100%; text-align: left;">Email address</label>
-                                    <input type="email" class="form-control form-control-lg" required minlength="6" required name="register-email" id="register-email" aria-describedby="emailHelp">
-                                    <div class="text-left"><span id="emailError" class="error-message"></span></div>
+                                    <input type="email" class="form-control form-control-lg" required minlength="6" required name="register-email" id="register-email" aria-describedby="email-help">
+                                    <div class="text-left"><span id="email-error-div" class="error-message"></span></div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="register-username" style="display: block; width: 100%; text-align: left;">Username</label>
                                     <input type="text" name="register-username" id="register-username" required class="form-control form-control-lg">
-                                    <div class="text-left"><span id="usernameError" class="error-message"></span></div>
+                                    <div class="text-left"><span id="username-error-div" class="error-message"></span></div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="register-passwordd" style="display: block; width: 100%; text-align: left;">Password</label>
-                                    <input type="password" class="form-control form-control-lg" required name="register-password" id="register-passwordd" 
+                                    <label for="register-password" style="display: block; width: 100%; text-align: left;">Password</label>
+                                    <input type="password" class="form-control form-control-lg" required name="register-password" id="register-password" 
                                     pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?><]).{8,}" 
                                     title="Must contain: at least one number, one uppercase letter, one lowercase letter, one special character, and 8 or more characters"
                                     required>
@@ -231,7 +231,7 @@
                                     <input class="form-control form-control-lg" rows="3" id="register-address" placeholder="Optional" name="register-address"></input>
                                 </div>
 
-                                <input id="submitBtn" type="submit" disabled value="Register" class="btn btn-danger btn-block"><br>
+                                <input id="register-submit-button" type="submit" disabled value="Register" class="btn btn-danger btn-block"><br>
                             </form>  
                         </div>
 
@@ -246,21 +246,23 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         
         <script>
-            function toggleRegistrationForm() {
-                var loginContainer = document.querySelector('#loginContainer');
-                var registrationForm = document.querySelector('#registrationForm');
 
-                if (loginContainer.style.display === 'none') {
-                    loginContainer.style.display = 'block';
-                    registrationForm.style.display = 'none';
+            function toggleRegisterform() {
+                var loginDiv = document.querySelector('#login-div');
+                var registerForm = document.querySelector('#register-form');
+
+                if (loginDiv.style.display === 'none') {
+                    loginDiv.style.display = 'block';
+                    registerForm.style.display = 'none';
                 } else {
-                    loginContainer.style.display = 'none';
-                    registrationForm.style.display = 'block';
+                    loginDiv.style.display = 'none';
+                    registerForm.style.display = 'block';
                 }
             }
 
+
             function showPassword() {
-                var x = document.getElementById("register-passwordd");
+                var x = document.getElementById("register-password");
                 if (x.type === "password") {
                     x.type = "text";
                 } else {
@@ -268,25 +270,10 @@
                 }
             }
 
-            function checkUsernameAvailability(username) {
-                return $.ajax({
-                    type: "GET",
-                    url: "/users/check-username",
-                    data: { "register-username": username },
-                });
-            }
 
-            function checkEmailAvailability(email) {
-                return $.ajax({
-                    type: "GET",
-                    url: "/users/check-email",
-                    data: { "register-email": email },
-                });
-            }
-
-            function updateSubmitButtonState() {
+            function updateRegisterSubmitButtonState() {
                 var username = document.getElementById("register-username").value;
-                var password = document.getElementById("register-passwordd").value;
+                var password = document.getElementById("register-password").value;
                 var email = document.getElementById("register-email").value;
                 var isValid = true;
 
@@ -300,7 +287,7 @@
                     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailRegex.test(email)) {
                         isValid = false;
-                        document.getElementById("emailError").textContent = "Invalid email format";
+                        document.getElementById("email-error-div").textContent = "Invalid email format";
                     }
                 }
 
@@ -308,79 +295,102 @@
                     isValid = false;
                 }
 
-                var usernameErrorElement = document.getElementById("usernameError");
-                var emailErrorElement = document.getElementById("emailError");
-                if (usernameErrorElement.textContent || emailErrorElement.textContent) {
+                var usernameErrorDiv = document.getElementById("username-error-div");
+                var emailErrorDiv = document.getElementById("email-error-div");
+                if (usernameErrorDiv.textContent || emailErrorDiv.textContent) {
                     isValid = false;
                 }
 
-                var submitButton = document.getElementById("submitBtn");
-                submitButton.disabled = !isValid;
+                var registerSubmitButton = document.getElementById("register-submit-button");
+                registerSubmitButton.disabled = !isValid;
             }
+    
 
-            document.getElementById("register-username").addEventListener("input", function () {
+            document.getElementById("register-password").addEventListener("input", function () {
+                updateRegisterSubmitButtonState();
+            });
+           
+            
+            document.getElementById("register-username").addEventListener("blur", function () {
+
                 var username = this.value;
+
                 if (username) {
+
                     checkUsernameAvailability(username)
                         .then(function (response) {
-                            var errorElement = document.getElementById("usernameError");
+
+                            var usernameErrorDiv = document.getElementById("username-error-div");
+
                             if (response.exists) {
-                                errorElement.textContent = "Username already exists";
-                                updateSubmitButtonState();
+                                usernameErrorDiv.textContent = "Username already exists";
                             } else {
-                                errorElement.textContent = "";
-                                var emailErrorElement = document.getElementById("emailError");
-                                if (!emailErrorElement.textContent) {
-                                    updateSubmitButtonState();
-                                }
+                                usernameErrorDiv.textContent = "";
                             }
+
+                            updateRegisterSubmitButtonState();
                         })
                         .catch(function (error) {
                             console.error("Error checking username availability:", error);
                         });
+
                 } else {
-                    document.getElementById("usernameError").textContent = "";
-                    updateSubmitButtonState();
+
+                    document.getElementById("username-error-div").textContent = "";
+                    updateRegisterSubmitButtonState();
                 }
             });
 
-            document.getElementById("register-email").addEventListener("input", function () {
+
+            document.getElementById("register-email").addEventListener("blur", function () {
+
                 var email = this.value;
-                if (email) {
-                    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(email)) {
-                        document.getElementById("emailError").textContent = "Invalid email format";
-                        updateSubmitButtonState();
-                        return;
-                    }
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-                    checkEmailAvailability(email)
-                        .then(function (response) {
-                            var errorElement = document.getElementById("emailError");
-                            if (response.exists) {
-                                errorElement.textContent = "Email already exists";
-                                updateSubmitButtonState();
-                            } else {
-                                errorElement.textContent = "";
-                                var usernameErrorElement = document.getElementById("usernameError");
-                                if (!usernameErrorElement.textContent) {
-                                    updateSubmitButtonState();
-                                }
-                            }
-                        })
-                        .catch(function (error) {
-                            console.error("Error checking email availability:", error);
-                        });
-                } else {
-                    document.getElementById("emailError").textContent = "";
-                    updateSubmitButtonState();
+                if (!emailRegex.test(email)) {
+
+                    document.getElementById("email-error-div").textContent = "Invalid email format";
+                    updateRegisterSubmitButtonState();
+                    return;
                 }
-            });
 
-            document.getElementById("register-passwordd").addEventListener("input", function () {
-                updateSubmitButtonState();
-            });
+                checkEmailAvailability(email)
+                    .then(function (response) {
 
+                        var emailErrorDiv = document.getElementById("email-error-div");
+
+                        if (response.exists) {
+                            emailErrorDiv.textContent = "Email already exists";
+                        } else {
+                            emailErrorDiv.textContent = "";
+                        }
+
+                        updateRegisterSubmitButtonState();
+                    })
+                    .catch(function (error) {
+                        console.error("Error checking email availability:", error);
+                    });
+
+            });
+        
+            
+            function checkUsernameAvailability(username) {
+                return $.ajax({
+                    type: "GET",
+                    url: "/users/check-username",
+                    data: { "register-username": username },
+                });
+            }
+
+            
+            function checkEmailAvailability(email) {
+                return $.ajax({
+                    type: "GET",
+                    url: "/users/check-email",
+                    data: { "register-email": email },
+                });
+            }
+        
         </script>
     </body>
 </html>

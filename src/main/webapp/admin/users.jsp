@@ -19,7 +19,7 @@
         <div class="container-fluid">
             <table class="table">
                 <tr>
-                    <th scope="col">User ID</th>
+                    <th scope="col">ID</th>
                     <th scope="col">Username</th>
                     <th scope="col">Email</th>
                     <th scope="col">Address</th>

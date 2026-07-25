@@ -67,10 +67,6 @@
                         </div>
 
                         <div class="form-group">
-                            <img src="" hidden id="product-image-preview" height="100px" width="100px" style="margin-top: 20px">
-                        </div>
-
-                        <div class="form-group">
                             <label for="product-discount">Discount</label>
                             <input type="input" class="form-control border border-warning" required name="product-discount" min="0" step="any" placeholder="Discount">
                         </div>
@@ -88,14 +84,6 @@
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
-        <script type="text/javascript">
-            var loadFile = function (event) {
-                var image = document.getElementById('product-image-preview');
-                image.hidden = !image.hidden;
-                image.src = URL.createObjectURL(event.target.files[0]);
-            };
-        </script>
     </body>
 
 </html>

@@ -159,40 +159,40 @@
 
             <div class="d-flex justify-content-end mb-3">
                 <form action="/cart/clear" method="post">
-                    <button type="submit" id="clearCart" class="btn btn-action">
+                    <button type="submit" id="clear-cart-button" class="btn btn-action">
                         Clear cart
                     </button>
                 </form>
 
                 <form action="/custom-cart/add-to-cart" method="post">
-                    <button id="add" type="submit" class="btn btn-action">
+                    <button id="add-custom-cart-to-cart-button" type="submit" class="btn btn-action">
                         Add custom cart to cart
                     </button>
                 </form>
 
-                <a id="show" href="/custom-cart" class="btn btn-action">
+                <a id="show-custom-cart-button" href="/custom-cart" class="btn btn-action">
                     Show custom cart
                 </a>
 
-                <input id="edit" type="button" value="Edit quantities" class="btn btn-action" onClick="editMode()">
+                <input id="edit-quantities-button" type="button" value="Edit quantities" class="btn btn-action" onClick="editMode()">
 
-                <button id="confirm" hidden type="submit" form="updateQuantity" class="btn btn-action">
+                <button id="confirm-quantities-changes-button" hidden type="submit" form="edit-quantities-form" class="btn btn-action">
                     Confirm changes
                 </button>
                 
-                <input hidden id="cancel" type="button" value="Cancel" class="btn btn-action" onClick="cancel()">
+                <input hidden id="cancel-quantities-changes-button" type="button" value="Cancel" class="btn btn-action" onClick="cancel()">
 
             </div>
             <br>
 
-            <form action="/cart/items/quantities/update" id="updateQuantity" method="post">
-                <table class="table" id="cartTable">
+            <form action="/cart/items/quantities/update" id="edit-quantities-form" method="post">
+                <table class="table" id="cart-table">
                     <thead>
                     <tr>
                         <th></th>
-                        <th>Product Name</th>
+                        <th>Product</th>
                         <th>Quantity</th>
-                        <th>Total Price</th>
+                        <th>Total price</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -209,17 +209,15 @@
                                         type="number" name="<%= item.getProduct().getId() %>|quantity"
                                         value="<%= item.getQuantity() %>">
 
-                                    <input type="hidden" name="productIDs" value="<%= item.getProduct().getId() %>">
+                                    <input type="hidden" name="product-ids" value="<%= item.getProduct().getId() %>">
                                 </td>
                                 <td style="width: 250px">
                                     $<%= item.getTotalNoTaxNoCoupons() %>
                                 </td>
                                 <td>
-                                    <form action="/cart/items/<%= item.getProduct().getId() %>/remove" method="post">
-                                        <button type="submit" class="btn btn-delete">
-                                            Remove
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-delete" onclick="removeCartItem('<%= item.getProduct().getId() %>')">
+                                        Remove
+                                    </button>
                                 </td>
                             </tr>
                         <% } %>
@@ -227,13 +225,15 @@
                 </table>
             </form>
 
+            <form id="remove-cart-item-form" method="post"></form>
+
             <br>
-            <p class="empty-cart-message" id="emptyCartMessage">Your cart is currently empty, add some products to view them here. 
+            <p class="empty-cart-message" id="empty-cart-message">Your cart is currently empty, add some products to view them here. 
                 <br><br>
                 <a href="/shop">Go to shop page</a>
             </p>
-            <p id="total">Total: $${totalNoTaxNoCoupons}</p>
-            <a id="checkOut" href="/checkout" class="btn btn-delete">Check out</a>
+            <p id="total-no-tax-no-coupons">Total: $${totalNoTaxNoCoupons}</p>
+            <a id="checkout-button" href="/checkout" class="btn btn-delete">Check out</a>
         </div>
 
         <br><br>
@@ -249,31 +249,42 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         
         <script>
-            const cartTable = document.getElementById("cartTable");
-            const clearCartButton = document.getElementById("clearCart");
-            const emptyCartMessage = document.getElementById("emptyCartMessage");
-            const tdFirst = document.getElementById("1");
-            const total = document.getElementById('total');
-            const checkOut = document.getElementById('checkOut');
+            const addCustomCartToCartButton = document.getElementById("add-custom-cart-to-cart-button");
+            const clearCartButton = document.getElementById("clear-cart-button");
+            const showCustomCartButton = document.getElementById("show-custom-cart-button");
+            const checkoutButton = document.getElementById("checkout-button");
+            const editQuantitiesButton = document.getElementById("edit-quantities-button");
+            const confirmQuantitiesChangesButton = document.getElementById("confirm-quantities-changes-button");
+            const cancelQuantitiesChangesButton = document.getElementById("cancel-quantities-changes-button");
+            
+            const totalNoTaxNoCoupons = document.getElementById("total-no-tax-no-coupons");
+            const emptyCartMessage = document.getElementById("empty-cart-message");
+            const cartTable = document.getElementById("cart-table");
 
-            if (tdFirst == null) {
-                cartTable.style.display = 'none';
-                clearCartButton.style.display = 'none';
-                emptyCartMessage.style.display = 'block';
-                total.style.display = 'none';
-                checkOut.style.display = 'none';
-                document.getElementById("edit").hidden = true;
+            const quantityInputs = document.querySelectorAll('input[name*="|quantity"]');
+
+            function removeCartItem(productId) {
+                var form = document.getElementById("remove-cart-item-form");
+                form.action = "/cart/items/" + productId + "/remove";
+                form.submit();
+            }
+
+            if (quantityInputs.length == 0) {
+                clearCartButton.style.display = "none";
+                cartTable.style.display = "none";
+                emptyCartMessage.style.display = "block";
+                totalNoTaxNoCoupons.style.display = "none";
+                checkoutButton.style.display = "none";
+                editQuantitiesButton.hidden = true;
             }
 
             function editMode() {
-                document.getElementById("add").hidden = true;
-                document.getElementById("clearCart").hidden = true;
-                document.getElementById("show").hidden = true;
-                document.getElementById("edit").hidden = true;
-                document.getElementById("confirm").hidden = false;
-                document.getElementById("cancel").hidden = false;
-
-                const quantityInputs = document.querySelectorAll('input[name*="|quantity"]');
+                addCustomCartToCartButton.hidden = true;
+                clearCartButton.hidden = true;
+                showCustomCartButton.hidden = true;
+                editQuantitiesButton.hidden = true;
+                confirmQuantitiesChangesButton.hidden = false;
+                cancelQuantitiesChangesButton.hidden = false;
 
                 quantityInputs.forEach((input) => {
                     input.removeAttribute("disabled");
@@ -282,7 +293,6 @@
                     input.style.border = "1px solid #ccc";
                 });
             }
-
 
             function cancel() {
                 location.reload();

@@ -92,31 +92,25 @@
                 <form action="/profile/update" method="post">
                     <div class="form-group">
                         <label for="email">Email address</label>
-                        <input type="email" class="form-control form-control-lg" required minlength="6" placeholder="Email*"
-                            value="${ email }" required name="email" id="email" aria-describedby="emailHelp">
+                        <input type="email" class="form-control form-control-lg" required minlength="6" placeholder="Email*" value="${ email }" name="email" id="email" aria-describedby="email-help">
+                        <div class="text-left"><span id="email-error-div" class="error-message"></span></div>
+
+                        <input hidden type="email" class="form-control form-control-lg" required minlength="6" placeholder="Email*" value="${ email }" name="original-email" id="original-email" aria-describedby="email-help">
                     </div>
                 
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input type="text" name="username" id="username" required placeholder="Username*" value="${ username }" required class="form-control form-control-lg">
-                    </div>
-                
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                
-                        <input type="password" class="form-control form-control-lg" required placeholder="Password*"
-                            value="${ password }" required name="password" id="password"
-                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?><]).{8,}"
-                            title="Must contain: at least one number, one uppercase letter, one lowercase letter, one special character, and 8 or more characters"
-                            required>
-                
-                        <input type="checkbox" onclick="showPassword()"> Show password
+                        <div class="text-left"><span id="username-error-div" class="error-message"></span></div>
+
+                        <input hidden type="text" name="original-username" id="original-username" required placeholder="Username*" value="${ username }" required class="form-control form-control-lg">
                     </div>
                 
                     <div class="form-group">
                         <label for="address">Address</label>
-                        <textarea class="form-control form-control-lg" rows="3" placeholder="Enter Your Address"
-                            name="address">${ address }</textarea>
+                        <textarea class="form-control form-control-lg" rows="3" id="address" placeholder="Enter Your Address" name="address">${ address }</textarea>
+                        
+                        <textarea hidden class="form-control form-control-lg" rows="3" id="original-address" placeholder="Enter Your Address" name="original-address">${ address }</textarea>   
                     </div>
                 
                     <div class="form-group">
@@ -129,7 +123,7 @@
                         <input class="form-control form-control-lg" readonly="true" value="${100-cumulativeTotal}">
                     </div>
                 
-                    <input type="submit" value="Update profile" class="btn btn-primary btn-block"><br>
+                    <input type="submit" id="update-profile-submit-button" disabled value="Update profile" class="btn btn-danger btn-block"><br>
                 
                 </form>
             </div>
@@ -150,16 +144,134 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
         <script>
-            function showPassword() {
-                var x = document.getElementById("password");
 
-                if (x.type === "password") {
-                    x.type = "text";
+            const originalUsername = document.getElementById("original-username").value;
+            const originalEmail = document.getElementById("original-email").value;
+            const originalAddress = document.getElementById("original-address").value;
+
+            function updateProfileSubmitButtonState() {
+                var username = document.getElementById("username").value;
+                var email = document.getElementById("email").value;
+                var address = document.getElementById("address").value;
+
+                var isValid = true;
+                var isDirty = false;
+
+                if (username !== originalUsername ||
+                    email !== originalEmail ||
+                    address !== originalAddress) {
+
+                    isDirty = true;
                 }
-                else {
-                    x.type = "password";
+
+                if (!username) {
+                    isValid = false;
                 }
+
+                if (!email) {
+                    isValid = false;
+                } else {
+                    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                    if (!emailRegex.test(email)) {
+                        isValid = false;
+                        document.getElementById("email-error-div").textContent = "Invalid email format";
+                    }
+                }
+
+                var usernameErrorDiv = document.getElementById("username-error-div");
+                var emailErrorDiv = document.getElementById("email-error-div");
+
+                if (usernameErrorDiv.textContent || emailErrorDiv.textContent) {
+                    isValid = false;
+                }
+
+                if (!isDirty) {
+                    isValid = false;
+                }
+
+                document.getElementById("update-profile-submit-button").disabled = !isValid;
             }
+
+
+            document.getElementById("username").addEventListener("blur", function () {
+
+                var username = this.value;
+
+                if (username) {
+
+                    checkUsernameAvailability(username)
+                        .then(function (response) {
+
+                            var usernameErrorDiv = document.getElementById("username-error-div");
+
+                            if (response.exists && username !== originalUsername) {
+                                usernameErrorDiv.textContent = "Username already exists";
+                            } else {
+                                usernameErrorDiv.textContent = "";
+                            }
+
+                            updateProfileSubmitButtonState();
+                        });
+
+                } else {
+
+                    document.getElementById("username-error-div").textContent = "";
+                    updateProfileSubmitButtonState();
+                }
+            });
+
+
+            document.getElementById("email").addEventListener("blur", function () {
+
+                var email = this.value;
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!emailRegex.test(email)) {
+
+                    document.getElementById("email-error-div").textContent = "Invalid email format";
+                    updateProfileSubmitButtonState();
+                    return;
+                }
+
+                checkEmailAvailability(email)
+                    .then(function (response) {
+
+                        var emailErrorDiv = document.getElementById("email-error-div");
+
+                        if (response.exists && email !== originalEmail) {
+                            emailErrorDiv.textContent = "Email already exists";
+                        } else {
+                            emailErrorDiv.textContent = "";
+                        }
+
+                        updateProfileSubmitButtonState();
+                    });
+            });
+
+
+            document.getElementById("address").addEventListener("input", function () {
+                updateProfileSubmitButtonState();
+            });
+
+
+            function checkUsernameAvailability(username) {
+                return $.ajax({
+                    type: "GET",
+                    url: "/users/check-username",
+                    data: { "register-username": username }
+                });
+            }
+
+
+            function checkEmailAvailability(email) {
+                return $.ajax({
+                    type: "GET",
+                    url: "/users/check-email",
+                    data: { "register-email": email }
+                });
+            }
+
         </script>
     </body>
 </html>

@@ -1,73 +1,95 @@
 package bestfood.unit_tests;
 
 import bestfood.controller.AdminController;
-import bestfood.controller.UserController;
-import org.junit.Test;
+import bestfood.model.User;
+import bestfood.service.UserService;
 import org.springframework.ui.Model;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.junit.Before;
+import org.junit.Test;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
 
 public class AdminControllerTest {
 
-    @Test
-    public void TestSetUsername() {
-        String username = "user";
-        AdminController.setUsername("user");
-        assertEquals(username, AdminController.usernameForClass);
+    private AdminController adminController;
+    private UserService userService;
+
+    @Before
+    public void setUp() throws Exception {
+        adminController = new AdminController();
+
+        userService = mock(UserService.class);
+
+        java.lang.reflect.Field field = AdminController.class.getDeclaredField("userService");
+
+        field.setAccessible(true);
+        field.set(adminController, userService);
     }
 
     @Test
-    public void testReturnIndex() {
-        UserController userControllerMock = mock(UserController.class);
+    public void testAdminLoginAuthenticatesAdmin() {
+        
+        Model model = mock(Model.class);
+        User admin = new User();
+        
+        admin.setId(1);
+        admin.setUsername("admin");
+        admin.setRole("ROLE_ADMIN");
 
-        // Create an instance of the class under test
-        AdminController adminController = new AdminController();
-        String result = adminController.userLogin();
+        when(userService
+                .authenticate("admin", "password"))
+                .thenReturn(admin);
 
-        // Verify that the method `setUsername` was called with an empty string
-        verify(userControllerMock, times(1)).setUsername("");
-        // Verify that the return value is as expected
-        assertEquals("userLogin", result);
+        String result = adminController.adminLogIn("admin", "password", model);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        assertEquals("1", auth.getName());
+        assertEquals("redirect:/admin/home", result);
     }
 
     @Test
-    public void testIndexMethodWithEmptyUsername() {
-        AdminController.usernameForClass = "";
-        AdminController adminController = new AdminController();
-        UserController userControllerMock = mock(UserController.class);
+    public void testAdminLoginWithInvalidCredentials() {
         Model model = mock(Model.class);
 
-        String result = adminController.userHome(model);
+        when(userService
+            .authenticate("admin", "wrong"))
+            .thenReturn(null);
 
-        // Verify that the method `setUsername` was not called
-        verifyNoInteractions(userControllerMock);
-        // Verify that the return value is as expected
-        assertEquals("userLogin", result);
+        String result = adminController.adminLogIn("admin", "wrong", model);
+
+        verify(model).addAttribute("message", "Invalid admin credentials");
+
+        assertEquals("admin/login", result);
     }
 
     @Test
-    public void testIndexMethodWithNonEmptyUsername() {
-        AdminController adminController = new AdminController();
-        Model modelMock = mock(Model.class);
-        String username = "non_empty";
-        AdminController.usernameForClass = username;
-        UserController userControllerMock = mock(UserController.class);
-
-        String result = adminController.userHome(modelMock);
-
-        // Verify that the model contains the attribute "username" with the expected
-        // value
-        verify(modelMock, times(1)).addAttribute("username", username);
-        // Verify that the return value is as expected
-        assertEquals("index", result);
-    }
-
-    @Test
-    public void TestUserLog() {
-        AdminController adminController = new AdminController();
+    public void testAdminLoginWithNonAdminUser() {
+        
         Model model = mock(Model.class);
-        String result = adminController.userLogin(model);
-        // Verify that the return value is as expected
-        assertEquals("userLogin", result);
+        User user = new User();
+
+        user.setId(1);
+        user.setRole("ROLE_USER");
+
+        when(userService
+            .authenticate("user", "password"))
+            .thenReturn(user);
+
+        String result = adminController.adminLogIn("user", "password", model);
+
+        verify(model).addAttribute("message", "Invalid admin credentials");
+
+        assertEquals("admin/login", result);
+    }
+
+    @Test
+    public void testAdminLoginPage() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        
+        assertEquals("admin/login", adminController.adminLoginPage(auth));
     }
 }

@@ -37,14 +37,14 @@
         <%@ include file="/fragments/admin-navbar.jsp" %>
         <br>
         <div class="d-flex justify-content-end mb-3">
-            <a href="/admin/products/create" id="create-product" class="btn btn-action">Add product</a>
+            <a href="/admin/products/create" id="create-product-button" class="btn btn-action">Add product</a>
         </div>
         <div class="container-fluid">
             <table class="table">
 
                 <tr>
-                    <th scope="col">Serial No.</th>
-                    <th scope="col">Product Name</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Product name</th>
                     <th scope="col">Category</th>
                     <th scope="col">Preview</th>
                     <th scope="col">Quantity</th>
@@ -52,7 +52,7 @@
                     <th scope="col">Discount</th>
                     <th scope="col">Weight</th>
                     <th scope="col">Product pair</th>
-                    <th scope="col">Suggested Items</th>
+                    <th scope="col">Suggested items</th>
                     <th scope="col">Delete</th>
                     <th scope="col">Update</th>
                 </tr>

@@ -91,7 +91,7 @@
                 outline: none;
             }
 
-            #searchResults {
+            #search-results {
                 position: absolute;
                 z-index: 1;
                 background-color: #fff;
@@ -106,17 +106,17 @@
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }
 
-            #searchResults li {
+            #search-results li {
                 padding: 8px;
                 cursor: pointer;
                 color: #292929;
             }
 
-            #searchResults li:hover {
+            #search-results li:hover {
                 background-color: #f2f2f2;
             }
 
-            #viewAllBtn {
+            #view-all-results-button {
                 display: none;
             }
 
@@ -200,9 +200,9 @@
                         <div class="col-md-12">
                             <h1 class="hero-text">Food Ecommerce Simplified</h1>
                             <div class="search-container">
-                                <input type="text" class="search-input" placeholder="Search products..." id="searchInput">
-                                <ul style="color: #292929" id="searchResults"></ul>
-                                <a class="search-btn" href="#" id="viewAllBtn">View all results</a>
+                                <input type="text" class="search-input" placeholder="Search products..." id="search-input">
+                                <ul style="color: #292929" id="search-results"></ul>
+                                <a class="search-btn" href="#" id="view-all-results-button">View all results</a>
                                 <br><br><br><br>
                             </div>
                         </div>
@@ -274,8 +274,8 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         
         <script>
-            const searchInput = document.getElementById('searchInput');
-            const searchResults = document.getElementById('searchResults');
+            const searchInput = document.getElementById('search-input');
+            const searchResults = document.getElementById('search-results');
 
             searchInput.addEventListener('input', handleSearch);
 
@@ -354,7 +354,7 @@
                 const target = event.target;
 
                 if (!target.matches('.search-input')
-                    && !target.matches('#searchResults li')) {
+                    && !target.matches('#search-results li')) {
 
                     searchResults.style.display = 'none';
                 }

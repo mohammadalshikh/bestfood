@@ -3,11 +3,14 @@ package bestfood.controller;
 import bestfood.model.*;
 import bestfood.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,34 +33,55 @@ public class AdminController {
     private SupabaseStorageService storageService;
 
     @GetMapping("/admin/login")
-    public String adminLoginPage() {
+    public String adminLoginPage(Authentication auth) {
+
+        if (auth != null && auth.isAuthenticated()) {
+
+            if (auth.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+
+                return "redirect:/admin/home";
+            }
+
+            SecurityContextHolder.clearContext();
+        }
 
         return "admin/login";
     }
 
     @PostMapping("/admin/login")
-    public String adminLogin(
+    public String adminLogIn(
         @RequestParam("username") String username,
         @RequestParam("password") String password,
-        HttpSession session,
         Model model) {
 
-        User admin = userService.authenticate(username, password);
+        SecurityContextHolder.clearContext();
 
-        if (admin != null && admin.getRole().equals("ROLE_ADMIN")) {
+        User user = userService.authenticate(username, password);
 
-            session.setAttribute("admin", admin);
+        if (user != null && user.getRole().equals("ROLE_ADMIN")) {
+
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                String.valueOf(user.getId()),
+                null,
+                List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN")
+                )
+            );
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
             return "redirect:/admin/home";
         }
 
-        model.addAttribute("message", "Invalid admin credentials");
+        model.addAttribute("errorMessage", "Invalid admin credentials");
         return "admin/login";
     }
 
     @GetMapping("/admin/logout")
-    public String adminLogout(HttpSession session) {
+    public String adminLogOut() {
 
-        session.removeAttribute("admin");
+        SecurityContextHolder.clearContext();
 
         return "redirect:/admin/login";
     }
@@ -114,18 +138,16 @@ public class AdminController {
         List<Category> categories = categoryService.getAllCategories();
         List<Product> products = productService.getAllProducts();
 
-        int nextId = products.stream().mapToInt(Product::getId).max().orElse(0) + 1;
+        int nextProductId = products.stream().mapToInt(Product::getId).max().orElse(0) + 1;
 
         model.addAttribute("categories", categories);
-        model.addAttribute("nextProductId", nextId);
+        model.addAttribute("nextProductId", nextProductId);
 
         return "admin/products/create";
     }
 
     @GetMapping("/admin/products/{id}/update")
-    public String productsUpdatePage(
-        @PathVariable int id,
-        Model model) {
+    public String productsUpdatePage(@PathVariable int id, Model model) {
 
         Product product = productService.getProductById(id);
 

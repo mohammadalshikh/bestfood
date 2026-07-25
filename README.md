@@ -10,7 +10,7 @@
 
 ```bash
 chmod +x mvnw
-./mvnw -DskipTests spring-boot:run
+./mvnw spring-boot:run
 ```
 
 2- Open http://localhost:8080

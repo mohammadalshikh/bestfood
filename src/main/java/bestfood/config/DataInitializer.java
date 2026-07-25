@@ -25,7 +25,7 @@ public class DataInitializer implements CommandLineRunner {
             return;
         }
 
-        System.out.println("Initializing BestFood database...");
+        System.out.println("Initializing BestFood database.");
 
         Category fruits = categoryService.createCategory("Fruits");
         Category vegetables = categoryService.createCategory("Vegetables");

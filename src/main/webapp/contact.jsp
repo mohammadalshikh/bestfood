@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
 
         <style>
-            .img-contact {
+            .contact-image {
                 max-width: 50%;
                 height: auto;
                 display: block;
@@ -59,7 +59,6 @@
                 font-weight: bold;
             }
 
-
             .footer {
                 background-color: #292929;
                 color: #fff;
@@ -87,7 +86,7 @@
             <%@ include file="/fragments/navbar.jsp" %>
         </div>
         <div class="container py-5">
-            <div><img src="/images/contact.jpg" alt="Contact Us" class="img-contact">
+            <div><img src="/images/contact.jpg" alt="Contact Us" class="contact-image">
             </div>
             <br>
             <h1 class="text-center">Contact Us</h1>

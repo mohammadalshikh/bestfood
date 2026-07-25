@@ -54,7 +54,7 @@
                 <thead class="thead-light">
                     <tr>
                         <th scope="col">SN</th>
-                        <th scope="col">Category Name</th>
+                        <th scope="col">Category name</th>
                         <th scope="col">Delete</th>
                         <th scope="col">Update</th>
                     </tr>
@@ -74,17 +74,17 @@
                                 </td>
                                 <td>
                                     <form action="/admin/categories/${category.id}" method="post">
-                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModalCenter2" 
+                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#category-modal" 
                                         onclick="document.getElementById('category-name').value = '<%= category.getName() %>'; 
-                                        document.getElementById('categoryid').value =  '<%= category.getId() %>'; ">Update
+                                        document.getElementById('category-id').value =  '<%= category.getId() %>'; ">Update
                                         </button>
 
-                                        <div class="modal fade" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal fade" id="category-modal" tabindex="-1" role="dialog" aria-labelledby="category-modal-title" aria-hidden="true">
                                             
                                             <div class="modal-dialog modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLongTitle">
+                                                        <h5 class="modal-title" id="category-modal-title">
                                                             Update product details
                                                         </h5>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">

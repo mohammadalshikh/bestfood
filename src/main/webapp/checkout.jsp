@@ -124,14 +124,14 @@
                 <br>
                 <form action="/checkout/coupons" method="post">
                     <label>Apply coupons</label>
-                    <input type="number" class="form-control" name="apply" placeholder="${couponsApplied}" max="${couponsOwned}" min="0">
+                    <input type="number" class="form-control" name="coupons-count" placeholder="${couponsApplied}" max="${couponsOwned}" min="0">
                     <br>
                     
                     <button type="submit" class="btn btn-primary">Apply</button>
                 </form>
             </div>
             <div class="form-container">
-                <form id="payment-form" action="/checkout" method="post">
+                <form id="checkout-form" action="/checkout" method="post">
                     <div class="form-group">
                         <label for="first-name">First name</label>
                         <input type="text" class="form-control" id="first-name" value="Khaled" required>

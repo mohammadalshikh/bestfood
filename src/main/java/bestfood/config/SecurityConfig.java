@@ -7,8 +7,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-@Configuration @EnableWebSecurity
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
@@ -21,19 +24,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .csrf().disable()
-            .formLogin().disable()
-            .httpBasic().disable()
-
             .authorizeRequests()
 
+            // non-auth
             .antMatchers(
-                "/",
                 "/login",
-                "/logout",
+                "/admin/login",
                 "/register",
-                "/shop",
-                "/contact",
-                "/search",
                 "/users/check-username",
                 "/users/check-email",
                 "/css/**",
@@ -41,8 +38,35 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/images/**")
             .permitAll()
 
-            .antMatchers("/admin/**").authenticated()
+            // admins only
+            .antMatchers("/admin/**")
+            .hasRole("ADMIN")
 
-            .anyRequest().permitAll();
+            // admins + users
+            .anyRequest()
+            .authenticated()
+
+            // admin auth failure redirect
+            .and()
+            .exceptionHandling()
+            .defaultAuthenticationEntryPointFor(
+                new LoginUrlAuthenticationEntryPoint("/admin/login"),
+                new AntPathRequestMatcher("/admin/**")
+            )
+            .defaultAuthenticationEntryPointFor(
+                new LoginUrlAuthenticationEntryPoint("/login"),
+                new AntPathRequestMatcher("/**")
+            )
+            .accessDeniedPage("/admin/login")
+
+            // login
+            .and()
+            .formLogin().disable()
+
+            // logout
+            .logout()
+            .logoutSuccessUrl("/login")
+            .permitAll();
     }
+
 }
