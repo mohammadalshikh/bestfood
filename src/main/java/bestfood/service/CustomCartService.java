@@ -28,19 +28,9 @@ public class CustomCartService {
         this.userService = userService;
     }
 
-    public List<CustomCartItem> getAllCustomCartItems() {
-
-        return customCartItemRepo.findAll();
-    }
-
     public List<CustomCartItem> getCustomCartItemsByUserId(Integer userId) {
 
         return customCartItemRepo.findByUserId(userId);
-    }
-
-    public CustomCartItem getCustomCartItemById(Integer customCartItemId) {
-
-        return customCartItemRepo.findById(customCartItemId).orElse(null);
     }
 
     public CustomCartItem getCustomCartItemByUserIdAndProductId(Integer userId, Integer productId) {
@@ -97,11 +87,6 @@ public class CustomCartService {
     public void removeCustomCartItems(Integer userId) {
 
         customCartItemRepo.deleteByUserId(userId);
-    }
-
-    public CustomCartItem saveCustomCartItem(CustomCartItem customCartItem) {
-
-        return customCartItemRepo.save(customCartItem);
     }
 
     public float getTotalNoTaxNoCoupons(Integer userId) {

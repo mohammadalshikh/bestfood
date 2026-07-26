@@ -4,6 +4,8 @@ import bestfood.model.CartItem;
 import bestfood.model.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,26 +16,29 @@ public class CheckoutService {
     private final CartService cartService;
     private final UserService userService;
     private final TransactionHistoryService transactionHistoryService;
-    private final ProductLinkService productMatrixService;
+    private final ProductLinkService productLinkService;
 
     public CheckoutService(
         CartService cartService,
         UserService userService,
         TransactionHistoryService transactionHistoryService,
-        ProductLinkService productMatrixService) {
+        ProductLinkService productLinkService) {
 
         this.cartService = cartService;
         this.userService = userService;
         this.transactionHistoryService = transactionHistoryService;
-        this.productMatrixService = productMatrixService;
+        this.productLinkService = productLinkService;
     }
 
     @Transactional
     public void checkOut(Integer userId) {
 
-        int basketId = transactionHistoryService.getMaxTransactionId(userId) + 1;
+        int basketId = transactionHistoryService.getLastBasketId(userId) + 1;
+
         Set<Integer> products = new HashSet<>();
         List<CartItem> cartItems = cartService.getCartItemsByUserId(userId);
+
+        List<Integer> purchasedProductIds = new ArrayList<>();
 
         for (CartItem cartItem : cartItems) {
 
@@ -48,11 +53,24 @@ public class CheckoutService {
 
             if (productId != 0) {
                 products.add(productId);
+                purchasedProductIds.add(productId);
             }
         }
 
-        
-        productMatrixService.updateSomeBoughtWithProductsToBest(products);
+        for (int i = 0; i < purchasedProductIds.size(); i++) {
+
+            for (int j = 0; j < purchasedProductIds.size(); j++) {
+
+                if (i != j) {
+                    productLinkService.incrementProductLinkCount(
+                        purchasedProductIds.get(i),
+                        purchasedProductIds.get(j)
+                    );
+                }
+            }
+        }
+
+        productLinkService.updateSomeBoughtWithProductsToBest(products);
 
         updateUserPostCheckout(userId);
 

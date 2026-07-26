@@ -28,11 +28,6 @@ public class UserService {
         return userRepo.findById(userId).orElse(null);
     }
 
-    public User getUserByUsername(String username) {
-
-        return userRepo.findByUsername(username);
-    }
-
     public User authenticate(String username, String password) {
 
         User user = userRepo.findByUsername(username);
@@ -92,40 +87,11 @@ public class UserService {
         }
     }
 
-    public void deleteUser(Integer userId) {
-        
-        userRepo.deleteById(userId);
-    }
-
     public int getOwnedCouponsCount(Integer userId) {
 
         User user = getUserById(userId);
 
         return user != null ? user.getOwnedCoupons() : 0;
-    }
-
-    public void updateOwnedCouponsCount(Integer userId, int coupons) {
-
-        User user = getUserById(userId);
-
-        if (user != null) {
-
-            user.setOwnedCoupons(coupons);
-
-            userRepo.save(user);
-        }
-    }
-
-    public void updateUserCumulativeTotal(Integer userId, float total) {
-
-        User user = getUserById(userId);
-
-        if (user != null) {
-
-            user.setCumulativeTotal(total);
-
-            userRepo.save(user);
-        }
     }
 
 }

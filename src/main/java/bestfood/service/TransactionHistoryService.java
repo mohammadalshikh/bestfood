@@ -26,16 +26,7 @@ public class TransactionHistoryService {
         this.productRepo = productRepo;
     }
 
-    public List<TransactionHistory> getAllTransactionHistory() {
-        return transactionHistoryRepo.findAll();
-    }
-
-    public List<TransactionHistory> getUserTransactionHistory(Integer userId) {
-
-        return transactionHistoryRepo.findByUserId(userId);
-    }
-
-    public int getMaxTransactionId(Integer userId) {
+    public int getLastBasketId(Integer userId) {
 
         return transactionHistoryRepo
             .findByUserId(userId).stream()

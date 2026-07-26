@@ -1,8 +1,9 @@
 package bestfood.service;
 
-import bestfood.model.Category;
 import bestfood.model.Product;
+import bestfood.model.Category;
 import bestfood.repo.ProductRepo;
+import bestfood.repo.CategoryRepo;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -11,16 +12,16 @@ public class ProductService {
 
     private final ProductRepo productRepo;
     private final ProductLinkService productLinkService;
-    private final CategoryService categoryService;
+    private final CategoryRepo categoryRepo;
 
     public ProductService(
         ProductRepo productRepo,
-        CategoryService categoryService,
-        ProductLinkService productMatrixService) {
+        CategoryRepo categoryRepo,
+        ProductLinkService productLinkService) {
 
         this.productRepo = productRepo;
-        this.productLinkService = productMatrixService;
-        this.categoryService = categoryService;
+        this.productLinkService = productLinkService;
+        this.categoryRepo = categoryRepo;
     }
 
     public List<Product> getAllProductsExceptCoupon() {
@@ -43,7 +44,8 @@ public class ProductService {
         String description,
         double discount) {
 
-        Category category = categoryService.getCategoryById(categoryId);
+        Category category = categoryRepo.findById(categoryId)
+        .orElseThrow(() -> new RuntimeException("Category not found"));
 
         Product product = new Product();
 
@@ -89,20 +91,7 @@ public class ProductService {
 
         return productRepo.save(product);
     }
-
-    public Product updateProductQuantity(Integer productId, int quantity) {
-
-        Product product = getProductById(productId);
-
-        if (product == null) {
-            return null;
-        }
-
-        product.setQuantity(quantity);
-
-        return productRepo.save(product);
-    }
-
+    
     public void deleteProduct(Integer productId) {
 
         if (productId == 0) {

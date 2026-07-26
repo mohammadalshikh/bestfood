@@ -42,11 +42,6 @@ public class CategoryService {
             .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
-    public Category getCategoryByName(String categoryName) {
-
-        return categoryRepo.findByName(categoryName);
-    }
-
     public List<Product> getAllProductsByCategoryId(Integer categoryId) {
 
         return productRepo.findAllByCategoryId(categoryId);

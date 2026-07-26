@@ -22,19 +22,9 @@ public class CartService {
         this.userService = userService;
     }
 
-    public List<CartItem> getAllCartItems() {
-
-        return cartItemRepo.findAll();
-    }
-
     public List<CartItem> getCartItemsByUserId(Integer userId) {
 
         return cartItemRepo.findByUserId(userId);
-    }
-
-    public CartItem getCartItemById(Integer cartItemId) {
-
-        return cartItemRepo.findById(cartItemId).orElse(null);
     }
 
     public CartItem getCartItemByUserIdAndProductId(Integer userId, Integer productId) {
@@ -47,15 +37,15 @@ public class CartService {
         if (quantity <= 0) {
             return null;
         }
-
+        
         CartItem existing = getCartItemByUserIdAndProductId(userId, productId);
-
+        
         if (existing != null) {
             existing.setQuantity(existing.getQuantity() + quantity);
             
             return cartItemRepo.save(existing);
         }
-
+        
         User user = userService.getUserById(userId);
         Product product = productService.getProductById(productId);
         CartItem cartItem = new CartItem();
