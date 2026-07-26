@@ -7,7 +7,6 @@ import bestfood.repo.ProductRepo;
 import bestfood.repo.TransactionHistoryRepo;
 import bestfood.repo.UserRepo;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class TransactionHistoryService {
