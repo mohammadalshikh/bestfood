@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface TransactionHistoryRepo extends JpaRepository<TransactionHistory, Integer> {
 
-    List<TransactionHistory> findByUserId(int userId);
+    List<TransactionHistory> findByUserId(Integer userId);
     
 }

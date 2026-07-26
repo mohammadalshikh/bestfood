@@ -16,16 +16,16 @@ public class TransactionHistory {
 
     private int quantity;
 
-    private int transactionId;
+    private int basketId;
 
     public TransactionHistory() {
     }
 
-    public TransactionHistory(User user, Product product, int quantity, int transactionId) {
+    public TransactionHistory(User user, Product product, int quantity, int basketId) {
         this.user = user;
         this.product = product;
         this.quantity = quantity;
-        this.transactionId = transactionId;
+        this.basketId = basketId;
     }
 
     public Integer getId() {
@@ -60,12 +60,12 @@ public class TransactionHistory {
         this.quantity = quantity;
     }
 
-    public int getTransactionId() {
-        return transactionId;
+    public int getBasketId() {
+        return basketId;
     }
 
-    public void setTransactionId(int transactionId) {
-        this.transactionId = transactionId;
+    public void setBasketId(int basketId) {
+        this.basketId = basketId;
     }
     
 }

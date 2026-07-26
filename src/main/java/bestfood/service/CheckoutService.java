@@ -14,13 +14,13 @@ public class CheckoutService {
     private final CartService cartService;
     private final UserService userService;
     private final TransactionHistoryService transactionHistoryService;
-    private final ProductMatrixService productMatrixService;
+    private final ProductLinkService productMatrixService;
 
     public CheckoutService(
         CartService cartService,
         UserService userService,
         TransactionHistoryService transactionHistoryService,
-        ProductMatrixService productMatrixService) {
+        ProductLinkService productMatrixService) {
 
         this.cartService = cartService;
         this.userService = userService;
@@ -29,23 +29,22 @@ public class CheckoutService {
     }
 
     @Transactional
-    public void checkOut(int userId) {
+    public void checkOut(Integer userId) {
 
-        int transactionId = transactionHistoryService.getMaxTransactionId(userId) + 1;
-
+        int basketId = transactionHistoryService.getMaxTransactionId(userId) + 1;
         Set<Integer> products = new HashSet<>();
-
         List<CartItem> cartItems = cartService.getCartItemsByUserId(userId);
 
         for (CartItem cartItem : cartItems) {
 
-            int productId = cartItem.getProduct().getId();
+            Integer productId = cartItem.getProduct().getId();
 
             transactionHistoryService.addTransactionHistory(
                 userId,
                 productId,
                 cartItem.getQuantity(),
-                transactionId);
+                basketId
+            );
 
             if (productId != 0) {
                 products.add(productId);
@@ -53,21 +52,21 @@ public class CheckoutService {
         }
 
         
-        productMatrixService.updateProductPairs();
+        productMatrixService.updateSomeBoughtWithProductsToBest(products);
 
         updateUserPostCheckout(userId);
 
         cartService.removeCartItems(userId);
     }
 
-    public float getTotalAfterTaxNoCoupons(int userId) {
+    public float getTotalAfterTaxNoCoupons(Integer userId) {
 
         double cartTotalNoTaxNoCoupons = cartService.getTotalNoTaxNoCoupons(userId);
 
         return (float) (cartTotalNoTaxNoCoupons * 1.15);
     }
 
-    public float getTotalFinal(int userId) {
+    public float getTotalFinal(Integer userId) {
 
         float totalFinal = getTotalAfterTaxNoCoupons(userId);
         int coupons = getAppliedCouponsCount(userId);
@@ -77,14 +76,14 @@ public class CheckoutService {
         return totalFinal;
     }
 
-    public int getAppliedCouponsCount(int userId) {
+    public int getAppliedCouponsCount(Integer userId) {
 
         CartItem couponCartItem = cartService.getCartItemByUserIdAndProductId(userId, 0);
 
         return couponCartItem != null ? couponCartItem.getQuantity() : 0;
     }
 
-    public void updateAppliedCouponsCount(int userId, int couponsCount) {
+    public void updateAppliedCouponsCount(Integer userId, int couponsCount) {
 
         int ownedCoupons = userService.getOwnedCouponsCount(userId);
 
@@ -104,7 +103,7 @@ public class CheckoutService {
         }
     }
 
-    public void updateUserPostCheckout(int userId) {
+    public void updateUserPostCheckout(Integer userId) {
 
         User user = userService.getUserById(userId);
 

@@ -3,14 +3,22 @@ package bestfood.model;
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity @Table(name = "products") @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@Entity
+@Table(name = "products")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Product {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bought_with_product_id")
+    private Product boughtWithProduct;
 
     private String name;
     private String image;
@@ -19,8 +27,6 @@ public class Product {
     private int weight;
     private String description;
     private double discount;
-    private int productPair;
-    private int suggestedItem;
 
     public Product() {}
 
@@ -44,8 +50,6 @@ public class Product {
         this.weight = weight;
         this.description = description;
         this.discount = discount;
-        this.productPair = 0;
-        this.suggestedItem = 0;
     }
 
     public Integer getId() {
@@ -62,6 +66,14 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Product getBoughtWithProduct() {
+        return boughtWithProduct;
+    }
+
+    public void setBoughtWithProduct(Product boughtWithProduct) {
+        this.boughtWithProduct = boughtWithProduct;
     }
 
     public String getName() {
@@ -119,21 +131,4 @@ public class Product {
     public void setDiscount(double discount) {
         this.discount = discount;
     }
-
-    public int getProductPair() {
-        return productPair;
-    }
-
-    public void setProductPair(int productPair) {
-        this.productPair = productPair;
-    }
-
-    public int getSuggestedItem() {
-        return suggestedItem;
-    }
-
-    public void setSuggestedItem(int suggestedItem) {
-        this.suggestedItem = suggestedItem;
-    }
-    
 }

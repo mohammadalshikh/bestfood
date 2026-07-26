@@ -1,4 +1,4 @@
-<%@ page import="bestfood.model.ShopItem" %>
+<%@ page import="bestfood.model.Product" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -113,28 +113,30 @@
             <%@ include file="/fragments/navbar.jsp" %>
         </div>
 
-        <% ArrayList<ShopItem> shopItems = (ArrayList<ShopItem>) request.getAttribute("shopItems"); %>
+        <% ArrayList<Product> products = (ArrayList<Product>) request.getAttribute("products"); %>
         <section class="restaurant-section">
             <div class="container">
                 <div class="row">
-                    <% for (ShopItem item : shopItems) { %>
+                    <% for (Product product : product) { %>
                         <div class="col-md-4">
                             <div class="restaurant-item">
-                                <img src="<%= item.getImage() %>" alt="<%= item.getProductName() %>">
+                                <img src="<%= product.getImage() %>" alt="<%= product.getName() %>">
                                 <div class="container">
                                     <br>
-                                    <h4><%= item.getProductName() %> - <%= item.getPrice() %>$</h4>
-                                    <p>(Buy with <%= item.getSuggestedItem() %>)</p>
-                                    <form action="/cart/items" method="post" id="<%= item.getProductId() %>|ac">
-                                        <input hidden type="number" name="product-id" value="<%= item.getProductId() %>">
+                                    <h4><%= product.getName() %> - <%= product.getPrice() %>$</h4>
+                                        <% if (product.getBoughtWithProduct() != null) { %>
+                                            <p>Buy with <%= product.getBoughtWithProduct().getName() %></p>
+                                        <% } %>
+                                    <form action="/cart/items" method="post" id="<%= product.getId() %>|ac">
+                                        <input hidden type="number" name="product-id" value="<%= product.getId() %>">
                                         <input hidden type="number" name="product-quantity" value="1">
                                         <button style="background-color: #E74B3C; border-color: #E74B3C;" type="submit" class="btn btn-primary btn-lg">
                                             <i class="fas fa-shopping-cart"></i> Add to Cart
                                         </button>
                                     </form>
                                     <br>
-                                    <form action="/custom-cart/items" method="post" id="<%= item.getProductId() %>|acc">
-                                        <input hidden type="number" name="product-id" value="<%= item.getProductId() %>">
+                                    <form action="/custom-cart/items" method="post" id="<%= product.getId() %>|acc">
+                                        <input hidden type="number" name="product-id" value="<%= product.getId() %>">
                                         <input hidden type="number" name="product-quantity" value="1">
                                         <button style="background-color: #027BFF; font-size: 14px;" type="submit" class="btn btn-primary btn-lg">
                                             <i class="fas fa-shopping-cart"></i> Add to Custom Cart

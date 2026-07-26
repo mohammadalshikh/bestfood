@@ -100,12 +100,12 @@
                 margin-top: 20px;
             }
 
-            #total {
+            #total-no-tax-no-coupons {
                 font-size: 24px;
                 text-align: center;
             }
 
-            #checkOut {
+            #checkout-button {
                 display: block;
                 width: 200px;
                 margin: 0 auto;
@@ -113,7 +113,7 @@
                 font-size: 18px;
             }
 
-            #checkOut:hover {
+            #checkout-button:hover {
                 color: #fff;
             }
 
@@ -212,7 +212,7 @@
                                     <input type="hidden" name="product-ids" value="<%= item.getProduct().getId() %>">
                                 </td>
                                 <td style="width: 250px">
-                                    $<%= item.getTotalNoTaxNoCoupons() %>
+                                    $<%= String.format("%.2f", item.getTotalNoTaxNoCoupons()) %>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-delete" onclick="removeCartItem('<%= item.getProduct().getId() %>')">

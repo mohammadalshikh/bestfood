@@ -33,22 +33,22 @@ public class CustomCartService {
         return customCartItemRepo.findAll();
     }
 
-    public List<CustomCartItem> getCustomCartItemsByUserId(int userId) {
+    public List<CustomCartItem> getCustomCartItemsByUserId(Integer userId) {
 
         return customCartItemRepo.findByUserId(userId);
     }
 
-    public CustomCartItem getCustomCartItemById(Integer id) {
+    public CustomCartItem getCustomCartItemById(Integer customCartItemId) {
 
-        return customCartItemRepo.findById(id).orElse(null);
+        return customCartItemRepo.findById(customCartItemId).orElse(null);
     }
 
-    public CustomCartItem getCustomCartItemByUserIdAndProductId(int userId, int productId) {
+    public CustomCartItem getCustomCartItemByUserIdAndProductId(Integer userId, Integer productId) {
 
         return customCartItemRepo.findByUserIdAndProductId(userId, productId);
     }
 
-    public CustomCartItem addCustomCartItem(int userId, int productId, int quantity) {
+    public CustomCartItem addCustomCartItem(Integer userId, Integer productId, int quantity) {
 
         CustomCartItem existing = getCustomCartItemByUserIdAndProductId(userId, productId);
 
@@ -72,7 +72,7 @@ public class CustomCartService {
         return customCartItemRepo.save(customCartItem);
     }
 
-    public CustomCartItem updateCustomCartItemQuantity(int userId, int productId, int quantity) {
+    public CustomCartItem updateCustomCartItemQuantity(Integer userId, Integer productId, int quantity) {
 
         CustomCartItem customCartItem = getCustomCartItemByUserIdAndProductId(userId, productId);
 
@@ -88,13 +88,13 @@ public class CustomCartService {
     }
 
     @Transactional
-    public void removeCustomCartItem(int userId, int productId) {
+    public void removeCustomCartItem(Integer userId, Integer productId) {
 
         customCartItemRepo.deleteByUserIdAndProductId(userId, productId);
     }
 
     @Transactional
-    public void removeCustomCartItems(int userId) {
+    public void removeCustomCartItems(Integer userId) {
 
         customCartItemRepo.deleteByUserId(userId);
     }
@@ -104,7 +104,7 @@ public class CustomCartService {
         return customCartItemRepo.save(customCartItem);
     }
 
-    public float getTotalNoTaxNoCoupons(int userId) {
+    public float getTotalNoTaxNoCoupons(Integer userId) {
 
         float customCartTotal = 0;
 
@@ -114,7 +114,7 @@ public class CustomCartService {
 
             if (customCartItem.getProduct() != null) {
 
-                customCartTotal += productService.getProductPrice(
+                customCartTotal += productService.getProductPriceTimesQuantityTimesDiscount(
                     customCartItem.getProduct().getId(),
                     customCartItem.getQuantity()
                 );
@@ -124,7 +124,7 @@ public class CustomCartService {
     }
 
     @Transactional
-    public void addCustomCartToCart(int userId) {
+    public void addCustomCartToCart(Integer userId) {
 
         List<CustomCartItem> customCartItems = getCustomCartItemsByUserId(userId);
 

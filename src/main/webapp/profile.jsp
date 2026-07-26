@@ -57,6 +57,11 @@
                 font-weight: bold;
             }
 
+            .error-message {
+                color: red;
+                font-size: 14px;
+            }
+
             .footer {
                 background-color: #292929;
                 color: #fff;
@@ -120,7 +125,7 @@
                 
                     <div class="form-group">
                         <label>Minimum purchase for next coupon</label>
-                        <input class="form-control form-control-lg" readonly="true" value="${100-cumulativeTotal}">
+                        <input class="form-control form-control-lg" readonly="true" value="${untilNextCoupon}">
                     </div>
                 
                     <input type="submit" id="update-profile-submit-button" disabled value="Update profile" class="btn btn-danger btn-block"><br>
@@ -157,10 +162,7 @@
                 var isValid = true;
                 var isDirty = false;
 
-                if (username !== originalUsername ||
-                    email !== originalEmail ||
-                    address !== originalAddress) {
-
+                if (username !== originalUsername || email !== originalEmail || address !== originalAddress) {
                     isDirty = true;
                 }
 

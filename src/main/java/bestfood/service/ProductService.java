@@ -10,25 +10,25 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepo productRepo;
-    private final ProductMatrixService productMatrixService;
+    private final ProductLinkService productLinkService;
     private final CategoryService categoryService;
 
     public ProductService(
         ProductRepo productRepo,
         CategoryService categoryService,
-        ProductMatrixService productMatrixService) {
+        ProductLinkService productMatrixService) {
 
         this.productRepo = productRepo;
-        this.productMatrixService = productMatrixService;
+        this.productLinkService = productMatrixService;
         this.categoryService = categoryService;
     }
 
-    public List<Product> getAllProducts() {
-
-        return productRepo.findAll();
+    public List<Product> getAllProductsExceptCoupon() {
+        
+        return productRepo.findAllByIdNot(0);
     }
 
-    public Product getProductById(int productId) {
+    public Product getProductById(Integer productId) {
 
         return productRepo.findById(productId).orElse(null);
     }
@@ -36,7 +36,7 @@ public class ProductService {
     public Product createProduct(
         String name,
         String image,
-        int categoryId,
+        Integer categoryId,
         int quantity,
         float price,
         int weight,
@@ -55,14 +55,13 @@ public class ProductService {
         product.setWeight(weight);
         product.setDescription(description);
         product.setDiscount(discount);
-        product.setProductPair(0);
-        product.setSuggestedItem(0);
+        product.setBoughtWithProduct(null);
 
         return productRepo.save(product);
     }
 
     public Product updateProduct(
-        int productId,
+        Integer productId,
         String name,
         String image,
         int quantity,
@@ -76,6 +75,9 @@ public class ProductService {
         if (product == null) {
             return null;
         }
+        if (productId == 0) {
+            return product;
+        }
 
         product.setName(name);
         product.setImage(image);
@@ -88,7 +90,7 @@ public class ProductService {
         return productRepo.save(product);
     }
 
-    public Product updateProductQuantity(int productId, int quantity) {
+    public Product updateProductQuantity(Integer productId, int quantity) {
 
         Product product = getProductById(productId);
 
@@ -101,20 +103,11 @@ public class ProductService {
         return productRepo.save(product);
     }
 
-    public Product updateProductSuggestedItem(int productId, int suggestedItemId) {
+    public void deleteProduct(Integer productId) {
 
-        Product product = getProductById(productId);
-
-        if (product == null) {
-            return null;
+        if (productId == 0) {
+            return;
         }
-
-        product.setSuggestedItem(suggestedItemId);
-
-        return productRepo.save(product);
-    }
-
-    public void deleteProduct(int productId) {
 
         Product product = getProductById(productId);
 
@@ -122,7 +115,7 @@ public class ProductService {
             return;
         }
 
-        productMatrixService.deleteProductReferences(product);
+        productLinkService.deleteAllLinksForProduct(productId);
 
         productRepo.delete(product);
 
@@ -132,7 +125,7 @@ public class ProductService {
         return productRepo.findByNameContainingIgnoreCase(query);
     }
 
-    public float getProductPrice(int productID, int quantity) {
+    public float getProductPriceTimesQuantityTimesDiscount(Integer productID, int quantity) {
 
         Product product = getProductById(productID);
 

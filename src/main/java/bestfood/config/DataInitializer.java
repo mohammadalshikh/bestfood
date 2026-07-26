@@ -20,16 +20,28 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        if (!productService.getAllProducts().isEmpty()) {
+        if (!productService.getAllProductsExceptCoupon().isEmpty()) {
             System.out.println("Database already initialized.");
             return;
         }
 
         System.out.println("Initializing BestFood database.");
 
+        Category coupons = categoryService.createCategory("Coupons");
         Category fruits = categoryService.createCategory("Fruits");
         Category vegetables = categoryService.createCategory("Vegetables");
         Category meat = categoryService.createCategory("Meat");
+
+        productService.createProduct(
+            "Coupon",
+            "/images/coupon.png",
+            coupons.getId(),
+            1000,
+            0f,
+            0,
+            "$5 discount",
+            0
+        );
 
         productService.createProduct(
             "Apple",

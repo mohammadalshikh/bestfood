@@ -6,12 +6,12 @@ import java.util.List;
 
 public interface CustomCartItemRepo extends JpaRepository<CustomCartItem, Integer> {
 
-    List<CustomCartItem> findByUserId(int userId);
+    List<CustomCartItem> findByUserId(Integer userId);
 
-    CustomCartItem findByUserIdAndProductId(int userId, int productId);
+    CustomCartItem findByUserIdAndProductId(Integer userId, Integer productId);
 
-    void deleteByUserIdAndProductId(int userId, int productId);
+    void deleteByUserIdAndProductId(Integer userId, Integer productId);
 
-    void deleteByUserId(int userId);
+    void deleteByUserId(Integer userId);
     
 }

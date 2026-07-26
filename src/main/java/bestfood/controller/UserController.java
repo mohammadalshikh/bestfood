@@ -70,9 +70,7 @@ public class UserController {
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 String.valueOf(user.getId()),
                 null,
-                List.of(
-                    new SimpleGrantedAuthority(user.getRole())
-                )
+                List.of(new SimpleGrantedAuthority(user.getRole()))
             );
 
             SecurityContextHolder.getContext().setAuthentication(auth);
@@ -132,7 +130,7 @@ public class UserController {
     @GetMapping("/home")
     public String homePage(Model model) {
 
-        model.addAttribute("products", productService.getAllProducts());
+        model.addAttribute("products", productService.getAllProductsExceptCoupon());
 
         return "home";
     }
@@ -190,51 +188,23 @@ public class UserController {
     @GetMapping("/shop")
     public String shopPage(Model model) {
 
-        ArrayList<ShopItem> shopItems = new ArrayList<>();
-        List<Product> products = productService.getAllProducts();
-
-        for (Product product : products) {
-
-            if (product.getId() == 0)
-                continue;
-
-            String suggestedItem = "";
-
-            if (product.getSuggestedItem() != 0) {
-
-                Product suggested = productService.getProductById(product.getSuggestedItem());
-                if (suggested != null) {
-                    suggestedItem = suggested.getName();
-                }
-            }
-
-            shopItems.add(
-                new ShopItem(
-                    product.getImage(),
-                    product.getName(),
-                    product.getPrice(),
-                    product.getId(),
-                    suggestedItem
-                )
-            );
-        }
-
-        model.addAttribute("shopItems", shopItems);
+        model.addAttribute("products", productService.getAllProductsExceptCoupon());
+        
         return "shop";
     }
 
     @GetMapping("/profile")
     public String profilePage(Model model, Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
         User user = userService.getUserById(userId);
-        String cumulativeTotal = new DecimalFormat("0.00").format(user.getCumulativeTotal());
+        String untilNextCoupon = new DecimalFormat("0.00").format(100 - user.getCumulativeTotal());
 
         model.addAttribute("username", user.getUsername());
         model.addAttribute("email", user.getEmail());
         model.addAttribute("address", user.getAddress());
         model.addAttribute("ownedCoupons", user.getOwnedCoupons());
-        model.addAttribute("cumulativeTotal", cumulativeTotal);
+        model.addAttribute("untilNextCoupon", untilNextCoupon);
 
         return "profile";
     }
@@ -254,23 +224,23 @@ public class UserController {
     @GetMapping("/cart")
     public String cartPage(Model model, Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         List<CartItem> cartItems = cartService.getCartItemsByUserId(userId);
         
         model.addAttribute("cartItems", cartItems);
-        model.addAttribute("totalNoTaxNoCoupons", cartService.getTotalNoTaxNoCoupons(userId));
+        model.addAttribute("totalNoTaxNoCoupons", String.format("%.2f", cartService.getTotalNoTaxNoCoupons(userId)));
         
         return "cart";
     }
 
     @PostMapping("/cart/items")
     public String addItemToCart(
-        @RequestParam("product-id") int id, 
+        @RequestParam("product-id") Integer id, 
         @RequestParam("product-quantity") int quantity,
         Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         cartService.addCartItem(userId, id, quantity);
 
@@ -281,7 +251,7 @@ public class UserController {
     public String updateCartItemsQuantities(
         @RequestParam MultiValueMap<String, String> params, Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         for (String key : params.keySet()) {
 
@@ -290,7 +260,7 @@ public class UserController {
                 String productIdString = key.substring(0, key.indexOf('|'));
                 String quantityString = params.getFirst(key);
 
-                int productId = Integer.parseInt(productIdString);
+                Integer productId = Integer.parseInt(productIdString);
                 int quantity = Integer.parseInt(quantityString);
 
                 cartService.updateCartItemQuantity(userId, productId, quantity);
@@ -303,7 +273,7 @@ public class UserController {
     @PostMapping("/cart/clear")
     public String clearCart(Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         cartService.removeCartItems(userId);
 
@@ -311,9 +281,9 @@ public class UserController {
     }
 
     @PostMapping("/cart/items/{productId}/remove")
-    public String removeCartItem(@PathVariable int productId, Authentication auth) {
+    public String removeCartItem(@PathVariable Integer productId, Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         cartService.removeCartItem(userId, productId);
 
@@ -323,26 +293,26 @@ public class UserController {
     @GetMapping("/custom-cart")
     public String customCart(Model model, Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         model.addAttribute(
             "customCartItems", 
             customCartService.getCustomCartItemsByUserId(userId)
         );
         model.addAttribute(
-            "totalNoTaxNoCoupons",
-            customCartService.getTotalNoTaxNoCoupons(userId)
+            "totalNoTaxNoCoupons", 
+            String.format("%.2f", customCartService.getTotalNoTaxNoCoupons(userId))
         );
         return "custom-cart";
     }
 
     @PostMapping("/custom-cart/items")
     public String addItemToCustomCart(
-        @RequestParam("product-id") int id,
+        @RequestParam("product-id") Integer id,
         @RequestParam("product-quantity") int quantity,
         Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         customCartService.addCustomCartItem(userId, id, quantity);
 
@@ -354,7 +324,7 @@ public class UserController {
         @RequestParam MultiValueMap<String, String> params,
         Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         for (String key : params.keySet()) {
 
@@ -363,7 +333,7 @@ public class UserController {
                 String productIdString = key.substring(0, key.indexOf('|'));
                 String quantityString = params.getFirst(key);
 
-                int productId = Integer.parseInt(productIdString);
+                Integer productId = Integer.parseInt(productIdString);
                 int quantity = Integer.parseInt(quantityString);
 
                 customCartService.updateCustomCartItemQuantity(userId, productId, quantity);
@@ -376,7 +346,7 @@ public class UserController {
     @PostMapping("/custom-cart/clear")
     public String clearCustomCart(Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         customCartService.removeCustomCartItems(userId);
 
@@ -384,9 +354,9 @@ public class UserController {
     }
 
     @PostMapping("/custom-cart/items/{productId}/remove")
-    public String removeCustomCartItem(@PathVariable int productId, Authentication auth) {
+    public String removeCustomCartItem(@PathVariable Integer productId, Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         customCartService.removeCustomCartItem(userId, productId);
 
@@ -396,7 +366,7 @@ public class UserController {
     @PostMapping("/custom-cart/add-to-cart")
     public String addCustomCartToCart(Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         customCartService.addCustomCartToCart(userId);
 
@@ -406,19 +376,22 @@ public class UserController {
     @GetMapping("/checkout")
     public String checkoutPage(Model model, Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         model.addAttribute(
             "totalNoTaxNoCoupons",
-            cartService.getTotalNoTaxNoCoupons(userId)
+            String.format("%.2f", 
+            cartService.getTotalNoTaxNoCoupons(userId))
         );
         model.addAttribute(
             "totalAfterTaxNoCoupons",
-            checkoutService.getTotalAfterTaxNoCoupons(userId)
+            String.format("%.2f", 
+            checkoutService.getTotalAfterTaxNoCoupons(userId))
         );
         model.addAttribute(
             "totalFinal",
-            checkoutService.getTotalFinal(userId)
+            String.format("%.2f", 
+            checkoutService.getTotalFinal(userId))
         );
         model.addAttribute(
             "couponsApplied",
@@ -434,7 +407,7 @@ public class UserController {
     @PostMapping("/checkout")
     public String checkOut(Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         checkoutService.checkOut(userId);
 
@@ -443,10 +416,10 @@ public class UserController {
 
     @PostMapping("/checkout/coupons")
     public String updateAppliedCoupons(
-        @RequestParam("coupons-count") int couponsCount,
+        @RequestParam(value = "coupons-count", required = false, defaultValue = "0") Integer couponsCount,
         Authentication auth) {
 
-        int userId = Integer.parseInt(auth.getName());
+        Integer userId = Integer.parseInt(auth.getName());
 
         checkoutService.updateAppliedCouponsCount(userId, couponsCount);
 

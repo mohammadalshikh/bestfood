@@ -41,7 +41,6 @@
         </div>
         <div class="container-fluid">
             <table class="table">
-
                 <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Product name</th>
@@ -51,76 +50,75 @@
                     <th scope="col">Price</th>
                     <th scope="col">Discount</th>
                     <th scope="col">Weight</th>
-                    <th scope="col">Product pair</th>
-                    <th scope="col">Suggested items</th>
+                    <th scope="col">Buy with</th>
                     <th scope="col">Delete</th>
                     <th scope="col">Update</th>
                 </tr>
                 <tbody>
-                    <% List<Product> productList = (List<Product>) request.getAttribute("products");
-                    List<Category> categoryList = (List<Category>) request.getAttribute("categories");
+                    <% List<Product> products = (List<Product>) request.getAttribute("products");
+                    List<Category> categories = (List<Category>) request.getAttribute("categories");
 
                     Map<Integer, String> categoryMap = new HashMap<>();
-                    if (categoryList != null) {
-                        for (Category cat : categoryList) {
-                            categoryMap.put(cat.getId(), cat.getName());
+                    if (categories != null) {
+                        for (Category category : categories) {
+                            categoryMap.put(category.getId(), category.getName());
                         }
                     }
 
-                    if (productList != null) {
-                        for (Product product : productList) { %>
-                            <tr>
-                                <td><%= product.getId() %></td>
-                                <td><%= product.getName() %></td>
-                                <td><%= categoryMap.getOrDefault(product.getCategory().getId(), "") %></td>
-                                <td><img src="<%= product.getImage() %>" height="100px" width="100px"></td>
-                                <td><%= product.getQuantity() %></td>
-                                <td>$<%= String.format("%.2f", product.getPrice()) %></td>
-                                <td><%= product.getDiscount() %></td>
-                                <td><%= product.getWeight() %></td>
-                                <td>
-                                    <% int productPairId = product.getProductPair(); 
-                                    if (productPairId> 0 && productList != null) {
-                                        for (Product p : productList) {
-                                            if (p.getId() == productPairId) {
-                                                out.print(p.getName());
-                                                break;
-                                            }
-                                        }
-                                    } %>
-                                </td>
-                                <td>
-                                    <form action="/admin/products/${product.id}/suggest" method="post">
-                                        <label for="suggested-product-id"></label>
-                                        <select id="suggested-product-id" name="suggested-product-id">
-                                            <% int currentItemId = product.getId(); 
-                                            int currentSuggestedItem = product.getSuggestedItem();
-                                            for (Product p : productList) { 
-                                                if (p.getId() != 0 && p.getId() != currentItemId) { %>
-                                                    <option value="<%= p.getId() %>"
-                                                        <%= (p.getId() == currentSuggestedItem) ? "selected" : "" %>>
-                                                        <%= p.getName() %>
-                                                    </option>
-                                            <% }} %>
+                    if (products != null) {
+                        for (Product product : products) { 
+                            if (product.getId() == 0) { %>
+                                <tr>
+                                    <td><%= product.getId() %></td>
+                                    <td><%= product.getName() %></td>
+                                    <td><%= categoryMap.getOrDefault(product.getCategory().getId(), "") %></td>
+                                    <td><img src="<%= product.getImage() %>" height="100px" width="100px"></td>
+                                    <td><%= product.getQuantity() %></td>
+                                    <td>$<%= String.format("%.2f", product.getPrice()) %></td>
+                                    <td><%= product.getDiscount() %></td>
+                                    <td><%= product.getWeight() %></td>
+                                    <td>
+                                        <% if (product.getBoughtWithProduct() != null) { %>
+                                            <%= product.getBoughtWithProduct().getName() %>
+                                        <% } else { %>
+                                            -
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            <% } else { %>
+                                <tr>
+                                    <td><%= product.getId() %></td>
+                                    <td><%= product.getName() %></td>
+                                    <td><%= categoryMap.getOrDefault(product.getCategory().getId(), "") %></td>
+                                    <td><img src="<%= product.getImage() %>" height="100px" width="100px"></td>
+                                    <td><%= product.getQuantity() %></td>
+                                    <td>$<%= String.format("%.2f", product.getPrice()) %></td>
+                                    <td><%= product.getDiscount() %></td>
+                                    <td><%= product.getWeight() %></td>
+                                    <td>
+                                        <% if (product.getBoughtWithProduct() != null) { %>
+                                            <%= product.getBoughtWithProduct().getName() %>
+                                        <% } else { %>
+                                            -
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <form action="/admin/products/${product.id}/delete" method="post">
+                                            <input id="delete" type="submit" value="Delete" class="btn btn-danger">
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form action="/admin/products/${product.id}/update" method="get">
+                                            <input type="submit" value="Update" class="btn btn-primary">
+                                        </form>
+                                    </td>
+                                </tr>   
 
-                                        </select>
-
-                                        <input type="submit">
-                                    </form>
-                                </td>
-                                <td>
-                                    <form action="/admin/products/${product.id}/delete" method="post">
-                                        <input id="delete" type="submit" value="Delete" class="btn btn-danger">
-                                    </form>
-                                </td>
-                                <td>
-                                    <form action="/admin/products/${product.id}/update" method="get">
-                                        <input type="submit" value="Update" class="btn btn-warning">
-                                    </form>
-                                </td>
-                            </tr>
-                    <% } } %>
-
+                    <% } } } %>
                 </tbody>
             </table>
         </div>

@@ -27,7 +27,7 @@ public class AdminController {
     private CategoryService categoryService;
 
     @Autowired
-    private ProductMatrixService productMatrixService;
+    private ProductLinkService productLinkService;
 
     @Autowired
     private SupabaseStorageService storageService;
@@ -65,9 +65,7 @@ public class AdminController {
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 String.valueOf(user.getId()),
                 null,
-                List.of(
-                    new SimpleGrantedAuthority("ROLE_ADMIN")
-                )
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
             );
             SecurityContextHolder.getContext().setAuthentication(auth);
 
@@ -104,16 +102,15 @@ public class AdminController {
     }
 
     @PostMapping("/admin/categories/{id}/delete")
-    public String deleteCategory(@PathVariable int id) {
+    public String deleteCategory(@PathVariable Integer id) {
 
         categoryService.deleteCategory(id);
-        productMatrixService.updateProductPairs();
 
         return "redirect:/admin/categories";
     }
 
     @PostMapping("/admin/categories/{id}")
-    public String updateCategory(@PathVariable int id, @RequestParam("category-name") String categoryName) {
+    public String updateCategory(@PathVariable Integer id, @RequestParam("category-name") String categoryName) {
 
         categoryService.updateCategory(id, categoryName);
 
@@ -123,7 +120,7 @@ public class AdminController {
     @GetMapping("/admin/products")
     public String productsPage(Model model) {
 
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productService.getAllProductsExceptCoupon();
         List<Category> categories = categoryService.getAllCategories();
 
         model.addAttribute("products", products);
@@ -136,18 +133,14 @@ public class AdminController {
     public String productsCreatePage(Model model) {
 
         List<Category> categories = categoryService.getAllCategories();
-        List<Product> products = productService.getAllProducts();
-
-        int nextProductId = products.stream().mapToInt(Product::getId).max().orElse(0) + 1;
 
         model.addAttribute("categories", categories);
-        model.addAttribute("nextProductId", nextProductId);
 
         return "admin/products/create";
     }
 
     @GetMapping("/admin/products/{id}/update")
-    public String productsUpdatePage(@PathVariable int id, Model model) {
+    public String productsUpdatePage(@PathVariable Integer id, Model model) {
 
         Product product = productService.getProductById(id);
 
@@ -161,7 +154,7 @@ public class AdminController {
     @PostMapping("/admin/products/create")
     public String createProduct(
         @RequestParam("product-name") String name,
-        @RequestParam("product-category-id") int categoryId,
+        @RequestParam("product-category-id") Integer categoryId,
         @RequestParam("product-price") float price,
         @RequestParam("product-weight") int weight,
         @RequestParam("product-quantity") int quantity,
@@ -191,17 +184,17 @@ public class AdminController {
     }
 
     @PostMapping("/admin/products/{id}/delete")
-    public String deleteProduct(@PathVariable int id) {
+    public String deleteProduct(@PathVariable Integer id) {
 
         productService.deleteProduct(id);
-        productMatrixService.updateProductPairs();
+        productLinkService.updateAllBoughtWithProductsToBest();
 
         return "redirect:/admin/products";
     }
 
     @PostMapping("/admin/products/{id}/update")
     public String updateProduct(
-        @PathVariable int id,
+        @PathVariable Integer id,
         @RequestParam("product-name") String name,
         @RequestParam("product-price") float price,
         @RequestParam("product-weight") int weight,
@@ -218,16 +211,6 @@ public class AdminController {
         }
 
         productService.updateProduct(id, name, imagePath, quantity, price, weight, description, discount);
-
-        return "redirect:/admin/products";
-    }
-
-    @PostMapping("/admin/products/{id}/suggest")
-    public String suggestProduct(
-        @PathVariable int id,
-        @RequestParam("suggested-product-id") int suggestedProductId) {
-
-        productService.updateProductSuggestedItem(id, suggestedProductId);
 
         return "redirect:/admin/products";
     }

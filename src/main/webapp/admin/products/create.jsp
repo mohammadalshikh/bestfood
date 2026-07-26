@@ -68,7 +68,7 @@
 
                         <div class="form-group">
                             <label for="product-discount">Discount</label>
-                            <input type="input" class="form-control border border-warning" required name="product-discount" min="0" step="any" placeholder="Discount">
+                            <input type="number" class="form-control border border-warning" required name="product-discount" min="0" max="1" step="any" placeholder="Discount">
                         </div>
 
                         <input type="hidden" name="product-image-name">

@@ -124,10 +124,11 @@
                 <br>
                 <form action="/checkout/coupons" method="post">
                     <label>Apply coupons</label>
+                    <small class="text-muted">| You have ${couponsOwned} coupons</small>
                     <input type="number" class="form-control" name="coupons-count" placeholder="${couponsApplied}" max="${couponsOwned}" min="0">
                     <br>
                     
-                    <button type="submit" class="btn btn-primary">Apply</button>
+                    <button type="submit" class="btn btn-danger">Apply</button>
                 </form>
             </div>
             <div class="form-container">
@@ -173,7 +174,7 @@
                         <label for="email">Email address</label>
                         <input type="email" class="form-control" id="email" value="bestfood354@gmail.com" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit payment</button>
+                    <button type="submit" class="btn btn-danger">Submit payment</button>
                 </form>
             </div>
         </div>

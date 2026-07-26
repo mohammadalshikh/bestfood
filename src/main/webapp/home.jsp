@@ -232,7 +232,9 @@
                                         <h4>
                                             <%= product.getName() %> - <%= product.getPrice() %>$
                                         </h4>
-        
+                                        <% if (product.getBoughtWithProduct() != null) { %>
+                                            <p>Buy with <%= product.getBoughtWithProduct().getName() %></p>
+                                        <% } %>
                                         <form action="/cart/items" method="post">
                                             <input hidden type="number" name="product-id" value="<%= product.getId() %>">
                                             <input hidden type="number" name="product-quantity" value="1">
@@ -242,9 +244,7 @@
                                                 Add to Cart
                                             </button>
                                         </form>
-        
                                         <br>
-        
                                         <form action="/custom-cart/items" method="post">
                                             <input hidden type="number" name="product-id" value="<%= product.getId() %>">
                                             <input hidden type="number" name="product-quantity" value="1">

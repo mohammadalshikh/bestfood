@@ -53,66 +53,73 @@
             <table class="table">
                 <thead class="thead-light">
                     <tr>
-                        <th scope="col">SN</th>
+                        <th scope="col">ID</th>
                         <th scope="col">Category name</th>
                         <th scope="col">Delete</th>
                         <th scope="col">Update</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% List<Category> categoryList = (List<Category>) request.getAttribute("categories"); 
-                    if (categoryList != null) {
-                        for (Category category : categoryList) { %>
+                    <% List<Category> categories = (List<Category>) request.getAttribute("categories"); 
+                    if (categories != null) {
+                        for (Category category : categories) { %>
                             <tr>
                                 <td><%= category.getId() %></td>
                                 <td><%= category.getName() %></td>
 
                                 <td>
-                                    <form action="/admin/categories/${category.id}/delete" method="post">
-                                        <input type="submit" value="Delete" class="btn btn-danger">
-                                    </form>
+                                    <% if (category.getId() != 0) { %>
+                                        <form action="/admin/categories/<%= category.getId() %>/delete" method="post">
+                                            <input type="submit" value="Delete" class="btn btn-danger">
+                                        </form>
+                                        
+                                    <% } %>
                                 </td>
                                 <td>
-                                    <form action="/admin/categories/${category.id}" method="post">
-                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#category-modal" 
-                                        onclick="document.getElementById('category-name').value = '<%= category.getName() %>'; 
-                                        document.getElementById('category-id').value =  '<%= category.getId() %>'; ">Update
-                                        </button>
+                                    <% if (category.getId() != 0) { %>
+                                        <form action="/admin/categories/<%= category.getId() %>" method="post">
+                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#category-modal-<%= category.getId() %>" 
+                                            onclick="document.getElementById('category-name-<%= category.getId() %>').value = '<%= category.getName() %>'; 
+                                            document.getElementById('category-id-<%= category.getId() %>').value =  '<%= category.getId() %>'; ">Update
+                                            </button>
 
-                                        <div class="modal fade" id="category-modal" tabindex="-1" role="dialog" aria-labelledby="category-modal-title" aria-hidden="true">
-                                            
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="category-modal-title">
-                                                            Update product details
-                                                        </h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body text-center">
-                                                        <div class="form-group">
-                                                            <input class="form-control" type="number" readonly="readonly" name="category-id" id="category-id" value="0">
+                                            <div class="modal fade" id="category-modal-<%= category.getId() %>" tabindex="-1" role="dialog" aria-labelledby="category-modal-title-<%= category.getId() %>" aria-hidden="true">
+                                                
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="category-modal-title-<%= category.getId() %>">
+                                                                Update product details
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <input class="form-control" type="text" name="category-name" id="category-name" value="category-name">
+                                                        <div class="modal-body text-center">
+                                                            <div class="form-group">
+                                                                <input class="form-control" type="number" readonly="readonly" name="category-id" id="category-id-<%= category.getId() %>" value="0">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input class="form-control" type="text" name="category-name" id="category-name-<%= category.getId() %>" value="category-name">
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                            Close
-                                                        </button>
-                                                        <button type="submit" class="btn btn-primary">
-                                                            Apply changes
-                                                        </button>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                                Close
+                                                            </button>
+                                                            <button type="submit" class="btn btn-primary">
+                                                                Apply changes
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
+                                        </form>
+
+                                    <% } %>
                                 </td>
                             </tr>
+
                     <% } } %>
                 </tbody>
             </table>

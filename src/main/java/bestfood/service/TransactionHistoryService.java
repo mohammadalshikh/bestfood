@@ -30,20 +30,20 @@ public class TransactionHistoryService {
         return transactionHistoryRepo.findAll();
     }
 
-    public List<TransactionHistory> getUserTransactionHistory(int userId) {
+    public List<TransactionHistory> getUserTransactionHistory(Integer userId) {
 
         return transactionHistoryRepo.findByUserId(userId);
     }
 
-    public int getMaxTransactionId(int userId) {
+    public int getMaxTransactionId(Integer userId) {
 
         return transactionHistoryRepo
             .findByUserId(userId).stream()
-            .mapToInt(TransactionHistory::getTransactionId)
+            .mapToInt(TransactionHistory::getBasketId)
             .max().orElse(0);
     }
 
-    public void addTransactionHistory(int userId, int productId, int quantity, int transactionId) {
+    public void addTransactionHistory(Integer userId, Integer productId, int quantity, int basketId) {
 
         User user = userRepo.findById(userId).orElse(null);
 
@@ -51,7 +51,7 @@ public class TransactionHistoryService {
 
         if (user != null && product != null) {
 
-            TransactionHistory history = new TransactionHistory(user, product, quantity, transactionId);
+            TransactionHistory history = new TransactionHistory(user, product, quantity, basketId);
 
             transactionHistoryRepo.save(history);
         }

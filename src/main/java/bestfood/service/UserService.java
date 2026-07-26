@@ -19,14 +19,17 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
+        
         return userRepo.findAll();
     }
 
-    public User getUserById(Integer id) {
-        return userRepo.findById(id).orElse(null);
+    public User getUserById(Integer userId) {
+
+        return userRepo.findById(userId).orElse(null);
     }
 
     public User getUserByUsername(String username) {
+
         return userRepo.findByUsername(username);
     }
 
@@ -71,7 +74,7 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    public void updateUser(int userId, String username, String email, String address) {
+    public void updateUser(Integer userId, String username, String email, String address) {
 
         User user = getUserById(userId);
 
@@ -89,19 +92,19 @@ public class UserService {
         }
     }
 
-    public void deleteUser(Integer id) {
+    public void deleteUser(Integer userId) {
         
-        userRepo.deleteById(id);
+        userRepo.deleteById(userId);
     }
 
-    public int getOwnedCouponsCount(int userId) {
+    public int getOwnedCouponsCount(Integer userId) {
 
         User user = getUserById(userId);
 
         return user != null ? user.getOwnedCoupons() : 0;
     }
 
-    public void updateOwnedCouponsCount(int userId, int coupons) {
+    public void updateOwnedCouponsCount(Integer userId, int coupons) {
 
         User user = getUserById(userId);
 
@@ -113,7 +116,7 @@ public class UserService {
         }
     }
 
-    public void updateUserCumulativeTotal(int userId, float total) {
+    public void updateUserCumulativeTotal(Integer userId, float total) {
 
         User user = getUserById(userId);
 

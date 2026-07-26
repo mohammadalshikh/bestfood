@@ -23,16 +23,13 @@
 
                     <div class="col-sm-5">
                         <div class="form-group">
-                            <label for="product-id">Id</label>
+                            <label for="product-id">ID</label>
                             <input type="number" readonly="readonly" class="form-control border border-success" name="product-id" value="${ product.id }">
-
                         </div>
-
                         <div class="form-group">
                             <label for="product-name">Name</label>
                             <input type="text" class="form-control border border-success" required name="product-name" value="${ product.name }" placeholder="Enter name">
                         </div>
-
                         <div class="form-group">
                             <label for="product-category">Select category</label>
                             <select class="form-control border border-success" name="product-category-id" readonly>
@@ -41,17 +38,14 @@
                                 </option>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label for="product-price">Price</label>
                             <input type="number" class="form-control border border-success" required name="product-price" value="${ product.price }" min="1" placeholder="Price">
                         </div>
-
                         <div class="form-group">
                             <label for="product-weight">Weight in grams</label>
                             <input type="number" class="form-control border border-success" required name="product-weight" value="${ product.weight }" min="1" placeholder="Weight">
                         </div>
-
                         <div class="form-group">
                             <label for="product-quantity">Available quantity</label>
                             <input type="number" class="form-control border border-success" required name="product-quantity" value="${ product.quantity }" min="1" placeholder="Quantity">
@@ -63,17 +57,14 @@
                             <label for="product-description">Description</label>
                             <textarea class="form-control border border-success" rows="4" name="product-description" placeholder="Product Details" value="${ product.description }"></textarea>
                         </div>
-
                         <p>Image</p>
                         <div class="custom-file">
                             <input type="file" class="form-control border border-warning" required name="product-image-file" id="product-image-file" accept="image/*"> 
                         </div>
-
                         <div class="form-group">
                             <label for="product-discount">Discount</label>
-                            <input type="input" class="form-control border border-success" required name="product-discount" value="${ product.discount }" min="0" max="1" step="any" placeholder="Discount">
+                            <input type="number" class="form-control border border-warning" required name="product-discount" min="0" max="1" step="any" placeholder="Discount">
                         </div>
-
                         <input type="hidden" name="product-old-image-path" value="${ product.image }">
                         <input type="submit" value="Update details" class="btn btn-primary">
                     </div>
