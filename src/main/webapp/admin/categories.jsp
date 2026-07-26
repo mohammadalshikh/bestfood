@@ -68,7 +68,7 @@
                                 <td><%= category.getName() %></td>
 
                                 <td>
-                                    <% if (category.getId() != 0) { %>
+                                    <% if (category.getId() != 1) { %>
                                         <form action="/admin/categories/<%= category.getId() %>/delete" method="post">
                                             <input type="submit" value="Delete" class="btn btn-danger">
                                         </form>
@@ -76,7 +76,7 @@
                                     <% } %>
                                 </td>
                                 <td>
-                                    <% if (category.getId() != 0) { %>
+                                    <% if (category.getId() != 1) { %>
                                         <form action="/admin/categories/<%= category.getId() %>" method="post">
                                             <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#category-modal-<%= category.getId() %>" 
                                             onclick="document.getElementById('category-name-<%= category.getId() %>').value = '<%= category.getName() %>'; 

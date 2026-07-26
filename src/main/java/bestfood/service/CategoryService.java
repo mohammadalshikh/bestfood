@@ -61,7 +61,7 @@ public class CategoryService {
 
         Category category = getCategoryById(categoryId);
 
-        if (categoryId == 0) {
+        if (categoryId == 1) {
             return category;
         }
 
@@ -77,7 +77,7 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(Integer categoryId) {
 
-        if (categoryId == 0) {
+        if (categoryId == 1) {
             return;
         }
 

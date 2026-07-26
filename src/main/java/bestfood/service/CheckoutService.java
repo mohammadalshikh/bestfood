@@ -51,7 +51,7 @@ public class CheckoutService {
                 basketId
             );
 
-            if (productId != 0) {
+            if (productId != 1) {
                 products.add(productId);
                 purchasedProductIds.add(productId);
             }

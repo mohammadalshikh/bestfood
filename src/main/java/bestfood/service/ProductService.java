@@ -77,7 +77,7 @@ public class ProductService {
         if (product == null) {
             return null;
         }
-        if (productId == 0) {
+        if (productId == 1) {
             return product;
         }
 
@@ -94,7 +94,7 @@ public class ProductService {
     
     public void deleteProduct(Integer productId) {
 
-        if (productId == 0) {
+        if (productId == 1) {
             return;
         }
 

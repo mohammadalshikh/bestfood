@@ -68,7 +68,7 @@ public class CartService {
         if (quantity > 0) {
             cartItem.setQuantity(quantity);
 
-        } else if (quantity == 0 && productId == 0) {
+        } else if (quantity == 0 && productId == 1) {
             removeCartItem(userId, productId);
             return null;
         }
@@ -96,7 +96,7 @@ public class CartService {
 
         for (CartItem cartItem : cartItems) {
 
-            if (cartItem.getProduct() != null && cartItem.getProduct().getId() != 0) {
+            if (cartItem.getProduct() != null && cartItem.getProduct().getId() != 1) {
 
                 cartTotalNoTaxNoCoupons += productService
                     .getProductPriceTimesQuantityTimesDiscount(cartItem.getProduct().getId(), cartItem.getQuantity());

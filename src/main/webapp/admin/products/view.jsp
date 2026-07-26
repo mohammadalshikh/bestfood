@@ -67,7 +67,7 @@
 
                     if (products != null) {
                         for (Product product : products) { 
-                            if (product.getId() == 0) { %>
+                            if (product.getId() == 1) { %>
                                 <tr>
                                     <td><%= product.getId() %></td>
                                     <td><%= product.getName() %></td>
