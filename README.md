@@ -24,5 +24,5 @@ Admin module
 -  Password: 123
 
 User module
--  user name: jay
+-  user name: mo
 -  password: 123
