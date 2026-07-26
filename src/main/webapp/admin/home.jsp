@@ -7,10 +7,60 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         
         <title>BestFood</title>
-        
+
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+        <style>
+            body {
+                font-family: 'Roboto', sans-serif;
+                background-color: #F8F9FA;
+            }
+
+            .navbar {
+                background-color: transparent;
+                font-weight: 500;
+                font-size: 17px;
+            }
+
+            .navbar-brand {
+                font-family: 'Pacifico', cursive;
+                font-size: 28px;
+                color: #fff;
+            }
+
+            .navbar-brand:hover {
+                font-family: 'Pacifico', cursive;
+                font-size: 28px;
+                color: #3c7ff3;
+            }
+
+            .navbar-nav .nav-link {
+                color: #fff;
+                transition: 0.5s ease;
+            }
+
+            .navbar-nav .nav-link:hover {
+                color: #3c7ff3;
+                font-weight: bold;
+            }
+
+            .hero-section {
+                text-align: center;
+                padding: 120px 0;
+            }
+
+            .hero-text {
+                font-size: 36px;
+                font-weight: bold;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                margin-bottom: 20px;
+                color: white;
+            }
+        </style>
     </head>
 
     <body class="bg-dark">

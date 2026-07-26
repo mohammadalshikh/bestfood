@@ -10,9 +10,58 @@
 
         <title>BestFood</title>
 
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+        <style>
+            body {
+                font-family: 'Roboto', sans-serif;
+            }
+
+            .navbar {
+                background-color: #343a40;
+                font-weight: 500;
+                font-size: 17px;
+            }
+
+            .navbar-brand {
+                font-family: 'Pacifico', cursive;
+                font-size: 28px;
+                color: #fff;
+            }
+
+            .navbar-brand:hover {
+                font-family: 'Pacifico', cursive;
+                font-size: 28px;
+                color: #3c7ff3;
+            }
+
+            .navbar-nav .nav-link {
+                color: #fff;
+                transition: 0.5s ease;
+            }
+
+            .navbar-nav .nav-link:hover {
+                color: #3c7ff3;
+                font-weight: bold;
+            }
+
+            .hero-section {
+                text-align: center;
+                padding: 120px 0;
+            }
+
+            .hero-text {
+                font-size: 36px;
+                font-weight: bold;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                margin-bottom: 20px;
+                color: white;
+            }
+        </style>
     </head>
 
     <body>
@@ -23,21 +72,21 @@
             <form action="/admin/products/create" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-sm-5">
-                        List<Category> categoryList = (List<Category>) request.getAttribute("categories"); %>
-
+                        
                         <div class="form-group">
                             <label for="product-name">Name</label>
                             <input type="text" class="form-control border border-warning" required name="product-name" placeholder="Enter name">
                         </div>
-
+                        
+                        <% List<Category> categories = (List<Category>) request.getAttribute("categories"); %>
                         <div class="form-group">
                             <label for="product-category-id">Select category</label>
-                            <select class="form-control border border-warning" name="product-category-id" required>
-                                <% if (categoryList != null) { for (Category category : categoryList) { %>
-                                    <option value="${ category.id }">
-                                        ${ category.name }
+                            <select class="form-control border border-success" name="product-category-id" required>
+                                <% for (Category category : categories) { %>
+                                    <option value="<%= category.getId() %>">
+                                        <%= category.getName() %>
                                     </option>
-                                    <% } } %>
+                                <% } %>
                             </select>
                         </div>
 
@@ -62,13 +111,14 @@
                         </div>
 
                         <p>Image</p>
-                        <div class="custom-file">
-                            <input type="file" class="form-control border border-warning" required name="product-image-file" id="product-image-file" accept="image/*">
+                        <div style="padding-bottom: 1rem;">
+                            <div class="custom-file">
+                                <input type="file" class="form-control border border-warning" required name="product-image-file" id="product-image-file" accept="image/*">
+                            </div>             
                         </div>
-
                         <div class="form-group">
                             <label for="product-discount">Discount</label>
-                            <input type="number" class="form-control border border-warning" required name="product-discount" min="0" max="1" step="any" placeholder="Discount">
+                            <input value="0" type="number" class="form-control border border-warning" required name="product-discount" min="0" max="1" step="any" placeholder="Discount">
                         </div>
 
                         <input type="hidden" name="product-image-name">

@@ -11,22 +11,19 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepo productRepo;
-    private final ProductLinkService productLinkService;
     private final CategoryRepo categoryRepo;
 
     public ProductService(
         ProductRepo productRepo,
-        CategoryRepo categoryRepo,
-        ProductLinkService productLinkService) {
+        CategoryRepo categoryRepo) {
 
         this.productRepo = productRepo;
-        this.productLinkService = productLinkService;
         this.categoryRepo = categoryRepo;
     }
 
     public List<Product> getAllProductsExceptCoupon() {
         
-        return productRepo.findAllByIdNot(0);
+        return productRepo.findAllByIdNotOrderByIdAsc(1);
     }
 
     public Product getProductById(Integer productId) {
@@ -65,6 +62,7 @@ public class ProductService {
     public Product updateProduct(
         Integer productId,
         String name,
+        Integer categoryId,
         String image,
         int quantity,
         float price,
@@ -83,6 +81,7 @@ public class ProductService {
 
         product.setName(name);
         product.setImage(image);
+        product.setCategory(categoryRepo.getById(categoryId));
         product.setQuantity(quantity);
         product.setPrice(price);
         product.setWeight(weight);
@@ -91,27 +90,10 @@ public class ProductService {
 
         return productRepo.save(product);
     }
-    
-    public void deleteProduct(Integer productId) {
-
-        if (productId == 1) {
-            return;
-        }
-
-        Product product = getProductById(productId);
-
-        if (product == null) {
-            return;
-        }
-
-        productLinkService.deleteAllLinksForProduct(productId);
-
-        productRepo.delete(product);
-
-    }
 
     public List<Product> searchProducts(String query) {
-        return productRepo.findByNameContainingIgnoreCase(query);
+        
+        return productRepo.findByNameContainingIgnoreCaseAndNameNotIgnoreCase(query, "coupon");
     }
 
     public float getProductPriceTimesQuantityTimesDiscount(Integer productID, int quantity) {
@@ -131,6 +113,11 @@ public class ProductService {
         }
 
         return 0;
+    }
+
+    public List<Product> getAllProducts() {
+        
+        return productRepo.findAllByOrderByIdAsc();
     }
 
 }

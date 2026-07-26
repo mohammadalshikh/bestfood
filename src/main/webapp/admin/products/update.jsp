@@ -1,3 +1,6 @@
+<%@ page import="bestfood.model.Category" %>
+<%@ page import="bestfood.model.Product" %>
+<%@ page import="java.util.List" %>
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
@@ -8,9 +11,58 @@
 
         <title>BestFood</title>
 
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+        <style>
+            body {
+                font-family: 'Roboto', sans-serif;
+            }
+
+            .navbar {
+                background-color: #343a40;
+                font-weight: 500;
+                font-size: 17px;
+            }
+
+            .navbar-brand {
+                font-family: 'Pacifico', cursive;
+                font-size: 28px;
+                color: #fff;
+            }
+
+            .navbar-brand:hover {
+                font-family: 'Pacifico', cursive;
+                font-size: 28px;
+                color: #3c7ff3;
+            }
+
+            .navbar-nav .nav-link {
+                color: #fff;
+                transition: 0.5s ease;
+            }
+
+            .navbar-nav .nav-link:hover {
+                color: #3c7ff3;
+                font-weight: bold;
+            }
+
+            .hero-section {
+                text-align: center;
+                padding: 120px 0;
+            }
+
+            .hero-text {
+                font-size: 36px;
+                font-weight: bold;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                margin-bottom: 20px;
+                color: white;
+            }
+        </style>
     </head>
 
     <body>
@@ -30,12 +82,16 @@
                             <label for="product-name">Name</label>
                             <input type="text" class="form-control border border-success" required name="product-name" value="${ product.name }" placeholder="Enter name">
                         </div>
+                        <% Product product = (Product) request.getAttribute("product");
+                        List<Category> categories = (List<Category>) request.getAttribute("categories"); %>
                         <div class="form-group">
                             <label for="product-category">Select category</label>
-                            <select class="form-control border border-success" name="product-category-id" readonly>
-                                <option value="${ product.category.id }">
-                                    ${ product.category.name }
-                                </option>
+                            <select class="form-control border border-success" name="product-category-id" required>
+                                <% for (Category category : categories) { %>
+                                    <option value="<%= category.getId() %>" <%= category.getId().equals(product.getCategory().getId()) ? "selected" : "" %> >
+                                        <%= category.getName() %>
+                                    </option>
+                                <% } %>
                             </select>
                         </div>
                         <div class="form-group">
@@ -58,12 +114,14 @@
                             <textarea class="form-control border border-success" rows="4" name="product-description" placeholder="Product Details" value="${ product.description }"></textarea>
                         </div>
                         <p>Image</p>
-                        <div class="custom-file">
-                            <input type="file" class="form-control border border-warning" required name="product-image-file" id="product-image-file" accept="image/*"> 
+                        <div style="padding-bottom: 1rem;">
+                            <div class="custom-file">
+                                <input type="file" class="form-control border border-warning"  name="product-image-file" id="product-image-file" accept="image/*"> 
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="product-discount">Discount</label>
-                            <input type="number" class="form-control border border-warning" required name="product-discount" min="0" max="1" step="any" placeholder="Discount">
+                            <input type="number" class="form-control border border-warning" value="${product.discount}" required name="product-discount" min="0" max="1" step="any" placeholder="Discount">
                         </div>
                         <input type="hidden" name="product-old-image-path" value="${ product.image }">
                         <input type="submit" value="Update details" class="btn btn-primary">

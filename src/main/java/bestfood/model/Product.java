@@ -1,7 +1,8 @@
 package bestfood.model;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "products")
@@ -18,6 +19,7 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bought_with_product_id")
+    @JsonIgnore
     private Product boughtWithProduct;
 
     private String name;

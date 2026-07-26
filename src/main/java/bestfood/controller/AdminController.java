@@ -27,9 +27,6 @@ public class AdminController {
     private CategoryService categoryService;
 
     @Autowired
-    private ProductLinkService productLinkService;
-
-    @Autowired
     private SupabaseStorageService storageService;
 
     @GetMapping("/admin/login")
@@ -84,6 +81,12 @@ public class AdminController {
         return "redirect:/admin/login";
     }
 
+    @GetMapping("/admin/home")
+    public String adminHome(Model model) {
+
+        return "admin/home";
+    }
+
     @GetMapping("/admin/categories")
     public String categoriesPage(Model model) {
 
@@ -101,14 +104,6 @@ public class AdminController {
         return "redirect:/admin/categories";
     }
 
-    @PostMapping("/admin/categories/{id}/delete")
-    public String deleteCategory(@PathVariable Integer id) {
-
-        categoryService.deleteCategory(id);
-
-        return "redirect:/admin/categories";
-    }
-
     @PostMapping("/admin/categories/{id}")
     public String updateCategory(@PathVariable Integer id, @RequestParam("category-name") String categoryName) {
 
@@ -120,7 +115,7 @@ public class AdminController {
     @GetMapping("/admin/products")
     public String productsPage(Model model) {
 
-        List<Product> products = productService.getAllProductsExceptCoupon();
+        List<Product> products = productService.getAllProducts();
         List<Category> categories = categoryService.getAllCategories();
 
         model.addAttribute("products", products);
@@ -132,9 +127,7 @@ public class AdminController {
     @GetMapping("/admin/products/create")
     public String productsCreatePage(Model model) {
 
-        List<Category> categories = categoryService.getAllCategories();
-
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", categoryService.getAllCategoriesExceptCoupons());
 
         return "admin/products/create";
     }
@@ -147,6 +140,7 @@ public class AdminController {
         if (product != null) {
             model.addAttribute("product", product);
         }
+        model.addAttribute("categories", categoryService.getAllCategoriesExceptCoupons());
 
         return "admin/products/update";
     }
@@ -182,20 +176,12 @@ public class AdminController {
 
         return "redirect:/admin/products";
     }
-
-    @PostMapping("/admin/products/{id}/delete")
-    public String deleteProduct(@PathVariable Integer id) {
-
-        productService.deleteProduct(id);
-        productLinkService.updateAllBoughtWithProductsToBest();
-
-        return "redirect:/admin/products";
-    }
-
+    
     @PostMapping("/admin/products/{id}/update")
     public String updateProduct(
         @PathVariable Integer id,
         @RequestParam("product-name") String name,
+        @RequestParam("product-category-id") Integer categoryId,
         @RequestParam("product-price") float price,
         @RequestParam("product-weight") int weight,
         @RequestParam("product-quantity") int quantity,
@@ -210,7 +196,14 @@ public class AdminController {
             imagePath = storageService.upload(file);
         }
 
-        productService.updateProduct(id, name, imagePath, quantity, price, weight, description, discount);
+        Category category = categoryService.getCategoryById(categoryId);
+
+        if (category != null) {
+            
+            productService.updateProduct(
+                id, name, categoryId, imagePath, quantity, price, weight, description, discount
+            );
+        }
 
         return "redirect:/admin/products";
     }

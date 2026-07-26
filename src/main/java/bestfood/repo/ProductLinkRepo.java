@@ -12,9 +12,4 @@ public interface ProductLinkRepo extends JpaRepository<ProductLink, Integer> {
     
     ProductLink findTopByOriginalProductOrderByPurchaseCountDesc(Product product);
 
-    List<ProductLink> findByOriginalProductIdOrBoughtWithProductId(
-        Integer originalProductId, 
-        Integer boughtWithProductId
-    );
-
 }

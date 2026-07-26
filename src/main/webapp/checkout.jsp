@@ -125,7 +125,7 @@
                 <form action="/checkout/coupons" method="post">
                     <label>Apply coupons</label>
                     <small class="text-muted">| You have ${couponsOwned} coupons</small>
-                    <input type="number" class="form-control" name="coupons-count" placeholder="${couponsApplied}" max="${couponsOwned}" min="0">
+                    <input type="number" class="form-control" value="${couponsApplied}" name="coupons-count" max="${couponsOwned}" min="0">
                     <br>
                     
                     <button type="submit" class="btn btn-danger">Apply</button>

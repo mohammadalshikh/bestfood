@@ -22,42 +22,6 @@ public class ProductLinkService {
         this.productRepo = productRepo;
     }
 
-    public void deleteAllLinksForProduct(Integer productId) {
-
-        List<ProductLink> links = productLinkRepo.findAll();
-
-        for (ProductLink link : links) {
-
-            if (link.getOriginalProduct().getId().equals(productId)
-                || link.getBoughtWithProduct().getId().equals(productId)) {
-
-                productLinkRepo.delete(link);
-            }
-        }
-    }
-
-    public Set<Integer> getAffectedProductIds(Integer productId) {
-
-        Set<Integer> affectedProductIds = new HashSet<>();
-
-        List<ProductLink> links = productLinkRepo.findByOriginalProductIdOrBoughtWithProductId(productId, productId);
-
-        for (ProductLink link : links) {
-
-            if (link.getOriginalProduct().getId().equals(productId)) {
-
-                affectedProductIds.add(link.getBoughtWithProduct().getId());
-            }
-
-            if (link.getBoughtWithProduct().getId().equals(productId)) {
-
-                affectedProductIds.add(link.getOriginalProduct().getId());
-            }
-        }
-
-        return affectedProductIds;
-    }
-
     public ProductLink findBestBoughtWith(Integer originalProductId) {
 
         Product product = productRepo.findById(originalProductId).orElse(null);
@@ -125,26 +89,9 @@ public class ProductLinkService {
         productLinkRepo.save(link);
     }
 
-    public void updateSomeBoughtWithProductsToBest(Set<Integer> productIds) {
+    public void updateBoughtWithProductsToBest(Set<Integer> originalProductIds) {
 
-        for (Integer productId : productIds) {
-
-            updateBoughtWithProductToBest(productId);
-        }
-    }
-
-    public void updateAllBoughtWithProductsToBest() {
-
-        List<ProductLink> links = productLinkRepo.findAll();
-
-        Set<Integer> productIds = new HashSet<>();
-
-        for (ProductLink link : links) {
-
-            productIds.add(link.getOriginalProduct().getId());
-        }
-
-        for (Integer productId : productIds) {
+        for (Integer productId : originalProductIds) {
 
             updateBoughtWithProductToBest(productId);
         }

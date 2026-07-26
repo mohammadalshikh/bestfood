@@ -15,24 +15,23 @@ public class CategoryService {
 
     private final CategoryRepo categoryRepo;
     private final ProductRepo productRepo;
-    private final ProductLinkService productLinkService;
-    private final ProductService productService;
 
     public CategoryService(
         CategoryRepo categoryRepo, 
-        ProductRepo productRepo, 
-        ProductLinkService productLinkService,
-        ProductService productService) {
+        ProductRepo productRepo) {
 
         this.categoryRepo = categoryRepo;
         this.productRepo = productRepo;
-        this.productLinkService = productLinkService;
-        this.productService = productService;
     }
 
     public List<Category> getAllCategories() {
 
-        return categoryRepo.findAll();
+        return categoryRepo.findAllByOrderByIdAsc();
+    }
+
+    public List<Category> getAllCategoriesExceptCoupons() {
+
+        return categoryRepo.findByIdNotOrderByIdAsc(1);
     }
 
     public Category getCategoryById(Integer categoryId) {
@@ -44,7 +43,7 @@ public class CategoryService {
 
     public List<Product> getAllProductsByCategoryId(Integer categoryId) {
 
-        return productRepo.findAllByCategoryId(categoryId);
+        return productRepo.findAllByCategoryIdOrderByIdAsc(categoryId);
 
     }
 
@@ -72,34 +71,6 @@ public class CategoryService {
         category.setName(categoryName);
 
         return categoryRepo.save(category);
-    }
-
-    @Transactional
-    public void deleteCategory(Integer categoryId) {
-
-        if (categoryId == 1) {
-            return;
-        }
-
-        Category category = getCategoryById(categoryId);
-        
-        if (category == null) {
-            return;
-        }
-        
-        List<Product> products = getAllProductsByCategoryId(categoryId);
-        Set<Integer> affectedProductIdsUnique = new HashSet<>();
-
-        for (Product product : products) {
-
-            affectedProductIdsUnique.addAll(productLinkService.getAffectedProductIds(product.getId()));
-
-            productService.deleteProduct(product.getId());
-        }
-
-        categoryRepo.delete(category);
-
-        productLinkService.updateSomeBoughtWithProductsToBest(affectedProductIdsUnique);
     }
 
 }

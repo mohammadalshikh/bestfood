@@ -70,7 +70,7 @@ public class CheckoutService {
             }
         }
 
-        productLinkService.updateSomeBoughtWithProductsToBest(products);
+        productLinkService.updateBoughtWithProductsToBest(products);
 
         updateUserPostCheckout(userId);
 
@@ -96,7 +96,7 @@ public class CheckoutService {
 
     public int getAppliedCouponsCount(Integer userId) {
 
-        CartItem couponCartItem = cartService.getCartItemByUserIdAndProductId(userId, 0);
+        CartItem couponCartItem = cartService.getCartItemByUserIdAndProductId(userId, 1);
 
         return couponCartItem != null ? couponCartItem.getQuantity() : 0;
     }
@@ -111,13 +111,13 @@ public class CheckoutService {
         couponsCount = Math.max(0, Math.min(couponsCount, ownedCoupons));
         couponsCount = Math.min(couponsCount, maxCoupons);
 
-        CartItem couponItem = cartService.getCartItemByUserIdAndProductId(userId, 0);
+        CartItem couponItem = cartService.getCartItemByUserIdAndProductId(userId, 1);
 
         if (couponItem != null) {
-            cartService.updateCartItemQuantity(userId, 0, couponsCount);
+            cartService.updateCartItemQuantity(userId, 1, couponsCount);
 
         } else {
-            cartService.addCartItem(userId, 0, couponsCount);
+            cartService.addCartItem(userId, 1, couponsCount);
         }
     }
 
@@ -125,23 +125,25 @@ public class CheckoutService {
 
         User user = userService.getUserById(userId);
 
-        if (user != null) {
-
-            float currentTransaction = getTotalFinal(userId);
-            float cumulativeTotal = user.getCumulativeTotal() + currentTransaction;
-
-            if ((int) cumulativeTotal / 100 != 0) {
-
-                int newCoupons = (int) cumulativeTotal / 100;
-                cumulativeTotal = cumulativeTotal % 100;
-
-                user.setOwnedCoupons(user.getOwnedCoupons() - getAppliedCouponsCount(userId) + newCoupons);
-            }
-
-            user.setCumulativeTotal(cumulativeTotal);
-
-            userService.saveUser(user);
+        if (user == null) {
+            return;
         }
+
+        float currentTransaction = getTotalFinal(userId);
+
+        float cumulativeTotal = user.getCumulativeTotal() + currentTransaction;
+
+        int newCoupons = (int) (cumulativeTotal / 100);
+        cumulativeTotal = cumulativeTotal % 100;
+
+        int appliedCoupons = getAppliedCouponsCount(userId);
+
+        int updatedCoupons = user.getOwnedCoupons() - appliedCoupons + newCoupons;
+
+        user.setOwnedCoupons(Math.max(updatedCoupons, 0));
+        user.setCumulativeTotal(cumulativeTotal);
+
+        userService.saveUser(user);
     }
     
 }

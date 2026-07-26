@@ -57,6 +57,7 @@ public class CartService {
         return cartItemRepo.save(cartItem);
     }
 
+    @Transactional
     public CartItem updateCartItemQuantity(Integer userId, Integer productId, int quantity) {
 
         CartItem cartItem = getCartItemByUserIdAndProductId(userId, productId);

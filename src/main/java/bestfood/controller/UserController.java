@@ -226,6 +226,7 @@ public class UserController {
 
         Integer userId = Integer.parseInt(auth.getName());
 
+        cartService.removeCartItem(userId, 1);
         List<CartItem> cartItems = cartService.getCartItemsByUserId(userId);
         
         model.addAttribute("cartItems", cartItems);
@@ -248,10 +249,11 @@ public class UserController {
     }
 
     @PostMapping("/cart/items/quantities/update")
-    public String updateCartItemsQuantities(
-        @RequestParam MultiValueMap<String, String> params, Authentication auth) {
+    public String updateCartItemsQuantities(@RequestParam MultiValueMap<String, String> params, Authentication auth) {
 
         Integer userId = Integer.parseInt(auth.getName());
+
+        cartService.removeCartItem(userId, 1);
 
         for (String key : params.keySet()) {
 
@@ -325,6 +327,8 @@ public class UserController {
         Authentication auth) {
 
         Integer userId = Integer.parseInt(auth.getName());
+
+        cartService.removeCartItem(userId, 1);
 
         for (String key : params.keySet()) {
 
@@ -416,7 +420,7 @@ public class UserController {
 
     @PostMapping("/checkout/coupons")
     public String updateAppliedCoupons(
-        @RequestParam(value = "coupons-count", required = false, defaultValue = "0") Integer couponsCount,
+        @RequestParam(value = "coupons-count", required = false, defaultValue = "0") int couponsCount,
         Authentication auth) {
 
         Integer userId = Integer.parseInt(auth.getName());

@@ -117,7 +117,7 @@
         <section class="restaurant-section">
             <div class="container">
                 <div class="row">
-                    <% for (Product product : product) { %>
+                    <% for (Product product : products) { %>
                         <div class="col-md-4">
                             <div class="restaurant-item">
                                 <img src="<%= product.getImage() %>" alt="<%= product.getName() %>">

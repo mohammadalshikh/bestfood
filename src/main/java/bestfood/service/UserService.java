@@ -20,7 +20,7 @@ public class UserService {
 
     public List<User> getAllUsers() {
         
-        return userRepo.findAll();
+        return userRepo.findAllByOrderByIdAsc();
     }
 
     public User getUserById(Integer userId) {
